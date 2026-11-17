@@ -250,7 +250,7 @@ body.vid .ytnote{display:block}
 <div class="sheet" id="sheet"><div class="grab"></div><div id="sheetBody"></div></div>
 <div class="toast" id="toast"></div>
 <input type="file" id="fileIn" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac" multiple class="hidden">
-<audio id="audio" preload="metadata"></audio>
+<audio id="audio" preload="auto" playsinline></audio>
 
 <script>
 /* ===================== DATA: charts (researched 17 Nov 2026) ===================== */
@@ -531,6 +531,7 @@ window.onYouTubeIframeAPIReady=()=>{try{
   yt=new YT.Player("ytFrame",{width:"100%",height:"100%",playerVars:{playsinline:1,rel:0,modestbranding:1,origin:location.origin},
     events:{onReady:()=>{ytReady=true;document.body.classList.add("yt-ok");renderAll()},
       onStateChange:e=>{ytState=e.data;if(e.data===0&&engine==="yt")onEnded();
+        if(e.data===2&&engine==="yt"&&document.hidden&&!userPaused)pausedByLock=true;
         if(e.data===1&&engine==="yt"){const s=cur();if(s)s.ytOk=true}updateNow()},
       onError:onYtError}})}catch(e){console.warn("yt init",e);ytFailed=true}};
 (function(){const t=document.createElement("script");t.src="https://www.youtube.com/iframe_api";t.onerror=()=>{ytFailed=true;renderAll()};document.head.appendChild(t);
@@ -544,7 +545,13 @@ const getDur=()=>engine==="yt"?(yt&&yt.getDuration?yt.getDuration():0):(audio.du
 const getTime=()=>engine==="yt"?(yt&&yt.getCurrentTime?yt.getCurrentTime():0):(audio.currentTime||0);
 function setTime(t){if(engine==="yt")yt&&yt.seekTo(t,true);else audio.currentTime=t}
 function doPlay(){if(engine==="yt")yt&&yt.playVideo();else audio.play().catch(()=>{})}
-function doPause(){if(engine==="yt")yt&&yt.pauseVideo();else audio.pause()}
+function doPause(){userPaused=true;setTimeout(()=>userPaused=false,800);if(engine==="yt")yt&&yt.pauseVideo();else audio.pause()}
+let userPaused=false,pausedByLock=false,lockTipShown=false;
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden)return;
+  if(pausedByLock&&engine==="yt"){pausedByLock=false;doPlay();
+    if(!lockTipShown){lockTipShown=true;toast("Resumed – YouTube songs pause on lock. Your MP3s keep playing.")}}
+});
 
 /* ===================== playback ===================== */
 function playList(ids,start=0,autoplay=true){
@@ -611,6 +618,7 @@ try{const ms=navigator.mediaSession;ms.setActionHandler("play",doPlay);ms.setAct
 function updateNow(){
   const s=cur();$("#mini").classList.toggle("on",!!s);if(!s)return;
   const playing=isPlaying();
+  try{navigator.mediaSession.playbackState=playing?"playing":"paused"}catch(e){}
   $("#miniArt").outerHTML=artHTML(s).replace('class="art ','id="miniArt" class="art ');
   $("#miniTitle").textContent=s.title;$("#miniArtist").textContent=s.artist;
   $("#miniPlay").innerHTML=playing?I.pause.replace(/28/g,"24"):I.play.replace(/28/g,"24");
