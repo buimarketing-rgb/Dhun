@@ -38,7 +38,8 @@ async function channelId(handle) {
 }
 const decode = s => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 function cleanTitle(raw, author) {
-  const parts = decode(raw).split(/\s*\|\s*|\s+[-–]\s+/).map(s => s.trim()).filter(Boolean);
+  const junk = /^(\d+k(\/\d+k)?( video)?|hd|full hd|t-series|zee music company|sony music india|yrf|saregama|tips official|latest .* songs?( \d{4})?|new .* songs?( \d{4})?)$/i;
+  const parts = decode(raw).split(/\s*\|\s*|\s+[-–]\s+/).map(s => s.trim()).filter(s => s && !junk.test(s));
   const strip = s => s.replace(/\((official|full|lyric(al)?|audio|video|music|song|visuali[sz]er|4k|hd)[^)]*\)/gi, "")
     .replace(/\b(full video|official video|video song|full song|lyrical video|lyrical|lyric video|official audio|audio song|music video|official music video|visualizer)\b/gi, "")
     .replace(/[\[\]]/g, "").replace(/\s{2,}/g, " ").trim();
