@@ -17,11 +17,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  update-and-deploy:
+  update:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,6 +33,21 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A new.json data || true
           git diff --cached --quiet || (git commit -m "Daily update: new releases" && git push)
+
+  # Publishes to https://buimarketing-rgb.github.io/Dhun/ once GitHub Pages is switched on
+  # (Settings → Pages → Source: GitHub Actions). Until then this job is skipped quietly,
+  # so the daily song update never shows as failed.
+  deploy:
+    needs: update
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
