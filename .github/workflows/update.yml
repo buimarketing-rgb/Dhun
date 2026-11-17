@@ -34,7 +34,7 @@ jobs:
         run: |
           git config user.name "dhun-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add new.json data/channels.json 2>/dev/null || true
+          git add -A new.json data || true
           git diff --cached --quiet || (git commit -m "Daily update: new releases" && git push)
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

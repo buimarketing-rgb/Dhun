@@ -23,6 +23,7 @@ const MUSIC = /song|video|audio|lyric|official|music|title track|visuali[sz]er|\
 const SKIP = /trailer|teaser|making of|behind the scenes|\bbts\b|interview|jukebox|reaction|promo|motion poster|dialogue|scene|livestream|live stream|podcast|#shorts|full album|nonstop|non-stop|mashup|announcement|unboxing|vlog/i;
 
 const H = { "user-agent": "Mozilla/5.0 (DhunBot; +https://github.com)", "accept-language": "en-US,en;q=0.9" };
+fs.mkdirSync("data", { recursive: true });
 const cacheFile = "data/channels.json";
 const cache = fs.existsSync(cacheFile) ? JSON.parse(fs.readFileSync(cacheFile, "utf8")) : {};
 
@@ -73,7 +74,7 @@ for (const src of SOURCES) {
 }
 const pick = lang => out.filter(s => s.lang === lang).sort((a, b) => b.published.localeCompare(a.published)).slice(0, PER_LANG);
 const songs = [...pick("hindi"), ...pick("english")];
-if (!songs.length) { console.error("No songs found – keeping previous new.json"); process.exit(0); }
-fs.writeFileSync("new.json", JSON.stringify({ updated: new Date().toISOString(), songs }, null, 1));
+if (!songs.length) { fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 1)); console.error("No songs found – keeping previous new.json"); process.exit(0); }
 fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 1));
+fs.writeFileSync("new.json", JSON.stringify({ updated: new Date().toISOString(), songs }, null, 1));
 console.log(`wrote ${songs.length} songs`);
