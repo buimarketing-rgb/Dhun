@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f0f12">
+<title>Dhun – Music Player</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0f12;--bg2:#17171c;--bg3:#202028;--line:#2a2a33;
+  --text:#f4f4f6;--muted:#9a9aa6;--accent:#ff7a3d;--accent2:#ffb347;
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+input{font:inherit}
+a{color:inherit}
+.app{display:flex;flex-direction:column;height:100%;max-width:560px;margin:0 auto;position:relative}
+header{padding:calc(14px + var(--safe-t)) 18px 8px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:-.02em}
+.logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center}
+.greet{color:var(--muted);font-size:13px;font-weight:500}
+main{flex:1;overflow-y:auto;padding:4px 0 170px}
+.view{display:none}.view.on{display:block}
+h2{font-size:19px;margin:22px 18px 12px;letter-spacing:-.01em}
+h2 small{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:3px}
+.row{display:flex;gap:12px;overflow-x:auto;padding:0 18px 4px;scrollbar-width:none}
+.row::-webkit-scrollbar{display:none}
+.card{flex:0 0 132px;text-align:left}
+.card .art{width:132px;height:132px;border-radius:12px}
+.card b{display:block;font-size:13px;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card span{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.art{position:relative;overflow:hidden;display:grid;place-items:center;font-weight:800;color:rgba(255,255,255,.92);flex:none}
+.art img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.list{padding:0 10px}
+.item{display:flex;align-items:center;gap:12px;padding:8px;border-radius:10px;width:100%;text-align:left}
+.item:active{background:var(--bg2)}
+.item .art{width:48px;height:48px;border-radius:8px;font-size:18px}
+.item .meta{flex:1;min-width:0}
+.item .meta b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .meta span{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.item.playing .meta b{color:var(--accent)}
+.rank{width:22px;text-align:center;color:var(--muted);font-weight:700;font-size:14px;flex:none}
+.more{width:36px;height:36px;display:grid;place-items:center;color:var(--muted);border-radius:50%}
+.chips{display:flex;gap:8px;padding:4px 18px 0;overflow-x:auto;scrollbar-width:none}
+.chip{padding:8px 14px;border-radius:999px;background:var(--bg3);font-size:13px;font-weight:600;white-space:nowrap}
+.chip.on{background:var(--accent);color:#1a0d05}
+.hero{margin:6px 18px 0;padding:18px;border-radius:16px;background:linear-gradient(135deg,#3a1d10,#1d1420 60%,#14141a);border:1px solid var(--line)}
+.hero h3{margin:0 0 6px;font-size:17px}
+.hero p{margin:0 0 14px;color:#cfc6c0;font-size:13px;line-height:1.5}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:999px;background:var(--accent);color:#1a0d05;font-weight:700;font-size:14px}
+.btn.ghost{background:var(--bg3);color:var(--text)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.search{margin:6px 18px 4px;display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:12px;padding:0 14px}
+.search input{flex:1;background:none;border:0;color:var(--text);padding:13px 0;outline:none;font-size:15px}
+.empty{color:var(--muted);text-align:center;padding:26px 30px;font-size:14px;line-height:1.5}
+.note{color:var(--muted);font-size:12px;padding:6px 18px 0;line-height:1.5}
+.note a{color:var(--accent2)}
+
+/* mini player */
+.mini{position:absolute;left:8px;right:8px;bottom:calc(66px + var(--safe-b));background:#2b1a14;border-radius:12px;display:none;align-items:center;gap:10px;padding:8px;box-shadow:0 8px 30px rgba(0,0,0,.5);overflow:hidden}
+.mini.on{display:flex}
+.mini .art{width:42px;height:42px;border-radius:8px;font-size:16px}
+.mini .meta{flex:1;min-width:0;text-align:left}
+.mini .meta b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini .meta span{display:block;font-size:12px;color:#d6c4bb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini .ctl{width:40px;height:40px;display:grid;place-items:center}
+.mini .bar{position:absolute;left:8px;right:8px;bottom:2px;height:2px;background:rgba(255,255,255,.15);border-radius:2px}
+.mini .bar i{display:block;height:100%;width:0;background:#fff;border-radius:2px}
+
+nav{position:absolute;left:0;right:0;bottom:0;display:flex;background:linear-gradient(to top,var(--bg) 70%,rgba(15,15,18,.85));padding:8px 0 calc(8px + var(--safe-b));border-top:1px solid var(--line)}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--muted)}
+nav button.on{color:var(--text)}
+
+/* full player */
+.player{position:fixed;inset:0;z-index:20;background:linear-gradient(180deg,var(--pc,#5a2a18) 0%,var(--bg) 75%);transform:translateY(100%);transition:transform .32s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;padding:calc(12px + var(--safe-t)) 24px calc(20px + var(--safe-b))}
+.player.on{transform:none}
+.player .top{display:flex;justify-content:space-between;align-items:center}
+.player .top b{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#e6d9d2}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:50%}
+.bigart{width:min(78vw,340px);aspect-ratio:1;border-radius:14px;margin:28px auto 26px;font-size:80px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.ptitle{display:flex;align-items:center;gap:10px;max-width:420px;width:100%;margin:0 auto}
+.ptitle div{flex:1;min-width:0}
+.ptitle b{display:block;font-size:21px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ptitle span{display:block;color:#cfc6c0;font-size:14.5px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seek{max-width:420px;width:100%;margin:18px auto 0}
+.seek input{width:100%;accent-color:#fff}
+.times{display:flex;justify-content:space-between;font-size:11.5px;color:#cfc6c0;margin-top:2px}
+.controls{display:flex;align-items:center;justify-content:space-between;max-width:420px;width:100%;margin:14px auto 0}
+.play{width:66px;height:66px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center}
+.toggle{position:relative;color:#cfc6c0}
+.toggle.on{color:var(--accent)}
+.toggle.on::after{content:"";position:absolute;bottom:2px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--accent)}
+.toggle .one{position:absolute;font-size:9px;font-weight:800;top:9px;left:50%;transform:translateX(-50%)}
+.liked{color:var(--accent)!important}
+.upnext{max-width:420px;width:100%;margin:22px auto 0;flex:1;overflow-y:auto;min-height:0}
+.upnext h4{margin:0 0 6px;font-size:13px;color:#e6d9d2;display:flex;justify-content:space-between;align-items:center}
+.upnext .item{padding:6px 0}
+.upnext .item .art{width:40px;height:40px}
+.switch{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);font-weight:600}
+.switch i{width:30px;height:17px;border-radius:10px;background:var(--bg3);position:relative;transition:.2s}
+.switch i::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#888;transition:.2s}
+.switch.on i{background:var(--accent)}
+.switch.on i::after{left:15px;background:#fff}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:30;display:none}
+.scrim.on{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;background:var(--bg2);border-radius:18px 18px 0 0;padding:10px 14px calc(18px + var(--safe-b));transform:translateY(105%);transition:transform .25s;max-width:560px;margin:0 auto;max-height:80vh;overflow-y:auto}
+.sheet.on{transform:none}
+.sheet .grab{width:38px;height:4px;background:var(--line);border-radius:2px;margin:0 auto 12px}
+.sheet .head{display:flex;align-items:center;gap:12px;padding:0 4px 12px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.sheet .head .art{width:52px;height:52px;border-radius:8px;font-size:20px}
+.sheet .opt{display:flex;align-items:center;gap:14px;width:100%;padding:13px 6px;font-size:15px;font-weight:500;text-align:left;text-decoration:none;border-radius:8px}
+.sheet .opt:active{background:var(--bg3)}
+.sheet .opt svg{color:var(--muted);flex:none}
+.sheet input[type=text]{width:100%;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);outline:none;margin:6px 0 12px}
+.toast{position:fixed;left:50%;bottom:calc(140px + var(--safe-b));transform:translateX(-50%) translateY(20px);background:#fff;color:#111;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:600;opacity:0;transition:.25s;z-index:40;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.hidden{display:none!important}
+.moods{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px}
+.mood{height:92px;border-radius:12px;padding:12px;text-align:left;font-weight:800;font-size:16px;position:relative;overflow:hidden;color:#fff}
+.mood small{display:block;font-size:11.5px;font-weight:600;opacity:.8;margin-top:3px}
+.mood::after{content:"";position:absolute;right:-18px;bottom:-18px;width:70px;height:70px;border-radius:14px;background:rgba(255,255,255,.18);transform:rotate(25deg)}
+.row .mood{flex:0 0 140px}
+.timer-on{color:var(--accent)!important}
+.ytwrap{width:min(92vw,440px);aspect-ratio:16/9;margin:0 auto;border-radius:12px;overflow:hidden;background:#000;height:0;aspect-ratio:auto;opacity:0;pointer-events:none}
+body.vid .ytwrap{height:auto;aspect-ratio:16/9;opacity:1;pointer-events:auto;margin:22px auto 22px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+body.vid #pArt{display:none}
+.ytwrap iframe{width:100%;height:100%;border:0;display:block}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><div class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1a0d05"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>Dhun</div>
+    <div class="greet" id="greet"></div>
+  </header>
+
+  <main id="main">
+    <!-- HOME -->
+    <section class="view on" id="v-home">
+      <div class="chips" id="homeChips">
+        <button class="chip on" data-f="all">All</button>
+        <button class="chip" data-f="hindi">Hindi</button>
+        <button class="chip" data-f="english">English</button>
+      </div>
+      <div id="homeLib"></div>
+      <h2>Moods &amp; moments<small>Playlists for every feeling and function</small></h2>
+      <div class="row" id="moodRow"></div>
+      <div id="newSec"></div>
+      <div data-lang="hindi">
+        <h2>Top Hindi this month<small>Most-streamed Bollywood songs in India · Nov 2026</small></h2>
+        <div class="list" id="chartHindi"></div>
+      </div>
+      <div data-lang="hindi">
+        <h2>Fresh Hindi releases<small>Trending on JioSaavn &amp; YouTube right now</small></h2>
+        <div class="row" id="freshHindi"></div>
+      </div>
+      <div data-lang="english">
+        <h2>Billboard Hot 100<small>Top English hits · week of 14 Nov 2026</small></h2>
+        <div class="list" id="chartEnglish"></div>
+      </div>
+      <p class="note" id="homeNote"></p>
+    </section>
+
+    <!-- SEARCH -->
+    <section class="view" id="v-search">
+      <div class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="text" placeholder="Songs, artists, albums" autocomplete="off">
+      </div>
+      <div id="searchOut"></div>
+    </section>
+
+    <!-- LIBRARY -->
+    <section class="view" id="v-lib">
+      <div style="padding:6px 18px 0" class="btns">
+        <button class="btn" id="addBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>Add songs</button>
+        <button class="btn ghost" id="newPlBtn">New playlist</button>
+      </div>
+      <div class="chips" id="libChips" style="padding-top:14px">
+        <button class="chip on" data-l="songs">Songs</button>
+        <button class="chip" data-l="liked">Liked</button>
+        <button class="chip" data-l="playlists">Playlists</button>
+        <button class="chip" data-l="artists">Artists</button>
+      </div>
+      <div id="libOut" style="padding-top:8px"></div>
+    </section>
+  </main>
+
+  <button class="mini" id="mini">
+    <div class="art" id="miniArt"></div>
+    <div class="meta"><b id="miniTitle"></b><span id="miniArtist"></span></div>
+    <span class="ctl" id="miniLike"></span>
+    <span class="ctl" id="miniPlay"></span>
+    <div class="bar"><i id="miniBar"></i></div>
+  </button>
+
+  <nav>
+    <button class="on" data-v="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z"/></svg>Home</button>
+    <button data-v="search"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search</button>
+    <button data-v="lib"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4v16M9 4v16M14 4l6 16"/></svg>Your Library</button>
+  </nav>
+</div>
+
+<!-- full player -->
+<div class="player" id="player">
+  <div class="top">
+    <button class="icon-btn" id="pClose"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg></button>
+    <b>Now playing</b>
+    <div style="display:flex"><button class="icon-btn" id="sleepBtn" title="Sleep timer"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/></svg></button>
+    <button class="icon-btn" id="pMore"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button></div>
+  </div>
+  <div class="art bigart" id="pArt"></div>
+  <div class="ytwrap" id="ytWrap"><div id="ytFrame"></div></div>
+  <div class="ptitle">
+    <div><b id="pTitle"></b><span id="pArtist"></span></div>
+    <button class="icon-btn" id="pLike"></button>
+  </div>
+  <div class="seek">
+    <input type="range" id="seek" min="0" max="1000" value="0">
+    <div class="times"><span id="tCur">0:00</span><span id="tDur">0:00</span></div>
+  </div>
+  <div class="controls">
+    <button class="icon-btn toggle" id="shuf" title="Shuffle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
+    <button class="icon-btn" id="prev"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+    <button class="play" id="play"></button>
+    <button class="icon-btn" id="next"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+    <button class="icon-btn toggle" id="rep" title="Repeat"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg><span class="one hidden" id="repOne">1</span></button>
+  </div>
+  <div class="upnext">
+    <h4><span>Up next</span><button class="switch on" id="autoSw"><i></i>Autoplay similar</button></h4>
+    <div id="upList"></div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet"><div class="grab"></div><div id="sheetBody"></div></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="fileIn" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac" multiple class="hidden">
+<audio id="audio" preload="metadata"></audio>
+
+<script>
+/* ===================== DATA: charts (researched 17 Nov 2026) ===================== */
+const CHART_HINDI = [
+ ["Arz Kiya Hai (Coke Studio Bharat)","Anuv Jain"],["Ashke","Karan Aujla"],["Jo Tum Mere Ho","Anuv Jain"],
+ ["Tere Liye","Atif Aslam"],["Tum Ho Toh (Saiyaara)","Vishal Mishra"],["Zaalima","Arijit Singh"],
+ ["Tu Thodi Der Aur Thehar Ja","Shreya Ghoshal"],["Apna Bana Le","Sachin-Jigar, Arijit Singh"],
+ ["Agar Tum Saath Ho (Tamasha)","Alka Yagnik, Arijit Singh"],["Mast Magan (2 States)","Arijit Singh"],
+ ["Ye Tune Kya Kiya","Pritam, Javed Bashir"],["For A Reason","Karan Aujla"],["Chahun Main Ya Naa (Aashiqui 2)","Palak Muchhal, Arijit Singh"],
+ ["Saiyaara","Tanishk Bagchi, Faheem Abdullah"],["Boyfriend","Karan Aujla"],["Be Intehaan","Atif Aslam"],
+ ["Tu Jaane Na","Atif Aslam"],["Raabta","Pritam, Arijit Singh"],["Humdard (Ek Villain)","Arijit Singh"],["Yeh Fitoor Mera","Amit Trivedi, Arijit Singh"]
+].map((s,i)=>({rank:i+1,title:s[0],artist:s[1],lang:"hindi"}));
+const FRESH_HINDI = [
+ ["Fitratein","Arijit Singh, Ronak Phukan"],["Ishq Jalakar – Karvaan","Shashwat Sachdev, Armaan Khan"],
+ ["Qubool","Vishal Mishra, Armaan Khan"],["Gehra Hua","Arijit Singh, Armaan Khan"],["Poison Baby","Jasmine Sandlas, Sachin-Jigar"]
+].map(s=>({title:s[0],artist:s[1],lang:"hindi"}));
+const CHART_ENGLISH = [
+ [1,"Choosin' Texas","Ella Langley"],[2,"Thriller","Michael Jackson"],[3,"Dracula","Tame Impala & JENNIE"],
+ [4,"Housewife","Tate McRae"],[5,"Boston","Stella Lefty"],[6,"Been By Now","Morgan Wallen"],[7,"Nicole Kidman","ADELA"],
+ [8,"BbY WOW","Karol G, Judeline & rusowsky"],[9,"Hate That I Made You Love Me","Ariana Grande"],[10,"Stupid Song","Olivia Rodrigo"],
+ [11,"Patient Zero","Taylor Swift"],[15,"Expectations","Olivia Rodrigo & Chappell Roan"],[16,"Babydoll","Dominic Fike"],[17,"I Just Might","Bruno Mars"]
+].map(s=>({rank:s[0],title:s[1],artist:s[2],lang:"english"}));
+/* Moods & moments: curated popular picks (h = Hindi, e = English) + keywords to auto-sort your own songs */
+const MOODS=[
+ {id:"party",name:"Party",hue:330,kw:/party|dance|edm|club|bhangra|punjabi|remix|hip.?hop|rap/,picks:[
+  ["Kala Chashma","Badshah, Neha Kakkar","h"],["London Thumakda","Labh Janjua, Sonu Kakkar, Neha Kakkar","h"],["Badtameez Dil","Benny Dayal","h"],
+  ["Abhi Toh Party Shuru Hui Hai","Badshah, Aastha Gill","h"],["Lungi Dance","Yo Yo Honey Singh","h"],["Naacho Naacho (RRR)","Vishal Mishra, Rahul Sipligunj","h"],
+  ["Uptown Funk","Mark Ronson, Bruno Mars","e"],["Levitating","Dua Lipa","e"],["Party Rock Anthem","LMFAO","e"],["Blinding Lights","The Weeknd","e"]]},
+ {id:"shaadi",name:"Shaadi & Sangeet",hue:15,kw:/wedding|shaadi|sangeet|mehendi|haldi|baraat|dulhan/,picks:[
+  ["Din Shagna Da","Jasleen Royal","h"],["Mehendi Laga Ke Rakhna","Lata Mangeshkar, Udit Narayan","h"],["Bole Chudiyan","Kavita Krishnamurthy, Sonu Nigam, Alka Yagnik, Udit Narayan","h"],
+  ["Sajan Ji Ghar Aaye","Kavita Krishnamurthy, Kumar Sanu, Alka Yagnik","h"],["Morni Banke","Guru Randhawa, Neha Kakkar","h"],["Kabira (Encore)","Arijit Singh, Harshdeep Kaur","h"],
+  ["Navrai Majhi","Sunidhi Chauhan, Shalmali Kholgade","h"],["Marry You","Bruno Mars","e"],["Perfect","Ed Sheeran","e"],["Thinking Out Loud","Ed Sheeran","e"]]},
+ {id:"romantic",name:"Romantic",hue:350,kw:/love|romantic|romance|ishq|pyaar|pyar|dil|mohabbat/,picks:[
+  ["Tum Hi Ho","Arijit Singh","h"],["Kesariya","Arijit Singh","h"],["Raataan Lambiyan","Jubin Nautiyal, Asees Kaur","h"],["Pehla Nasha","Udit Narayan, Sadhana Sargam","h"],
+  ["Tum Se Hi","Mohit Chauhan","h"],["All of Me","John Legend","e"],["Until I Found You","Stephen Sanchez","e"],["Perfect","Ed Sheeran","e"]]},
+ {id:"sad",name:"Heartbreak",hue:220,kw:/sad|heartbreak|breakup|dard|judaai|alvida|emotional/,picks:[
+  ["Channa Mereya","Arijit Singh","h"],["Kabhi Alvida Naa Kehna","Sonu Nigam, Alka Yagnik","h"],["Tujhe Bhula Diya","Mohit Chauhan, Shekhar Ravjiani, Shruti Pathak","h"],
+  ["Agar Tum Saath Ho (Tamasha)","Alka Yagnik, Arijit Singh","h"],["Someone Like You","Adele","e"],["drivers license","Olivia Rodrigo","e"],["Let Her Go","Passenger","e"]]},
+ {id:"workout",name:"Workout",hue:100,kw:/workout|gym|power|motivat|rock|metal/,picks:[
+  ["Zinda","Siddharth Mahadevan","h"],["Sultan","Sukhwinder Singh, Shadab Faridi","h"],["Kar Har Maidaan Fateh","Sukhwinder Singh, Shreya Ghoshal","h"],["Malhari","Vishal Dadlani","h"],
+  ["Lose Yourself","Eminem","e"],["Till I Collapse","Eminem","e"],["Eye of the Tiger","Survivor","e"],["Believer","Imagine Dragons","e"]]},
+ {id:"chill",name:"Chill",hue:180,kw:/chill|lo.?fi|acoustic|indie|ambient|calm|unplugged/,picks:[
+  ["Iktara","Kavita Seth, Amitabh Bhattacharya","h"],["Kho Gaye Hum Kahan","Jasleen Royal, Prateek Kuhad","h"],["cold/mess","Prateek Kuhad","h"],["Baarishein","Anuv Jain","h"],
+  ["Sunflower","Post Malone, Swae Lee","e"],["Riptide","Vance Joy","e"],["Banana Pancakes","Jack Johnson","e"]]},
+ {id:"festive",name:"Festivals",hue:40,kw:/festival|diwali|holi|navratri|garba|ganpati|ganesh|dandiya|eid|christmas/,picks:[
+  ["Deva Shree Ganesha","Ajay Gogavale","h"],["Balam Pichkari","Vishal Dadlani, Shalmali Kholgade","h"],["Rang Barse","Amitabh Bachchan","h"],
+  ["Shubhaarambh","Shruti Pathak, Divya Kumar","h"],["Chogada","Darshan Raval, Asees Kaur","h"],["Gallan Goodiyaan","Shankar Mahadevan, Farhan Akhtar, Yashita Sharma","h"],
+  ["Bolo Ta Ra Ra","Daler Mehndi","h"],["All I Want for Christmas Is You","Mariah Carey","e"]]},
+ {id:"birthday",name:"Birthday",hue:280,kw:/birthday|celebrat|happy/,picks:[
+  ["Baar Baar Din Yeh Aaye","Mohammed Rafi","h"],["Happy","Pharrell Williams","e"],["Celebration","Kool & The Gang","e"],["22","Taylor Swift","e"],["Birthday","Katy Perry","e"]]},
+ {id:"roadtrip",name:"Road Trip",hue:200,kw:/road|travel|drive|journey|safar/,picks:[
+  ["Ilahi","Arijit Singh","h"],["Yun Hi Chala Chal","Udit Narayan, Kailash Kher, Hariharan","h"],["Safarnama","Lucky Ali","h"],["Dil Chahta Hai","Shankar Mahadevan","h"],
+  ["Life Is a Highway","Rascal Flatts","e"],["Take Me Home, Country Roads","John Denver","e"],["Sweet Child O' Mine","Guns N' Roses","e"]]},
+ {id:"devotional",name:"Devotional",hue:25,kw:/devotional|bhajan|aarti|bhakti|spiritual|sufi|qawwali|mantra/,picks:[
+  ["Hanuman Chalisa","Hariharan","h"],["Ram Siya Ram","Sachet Tandon, Parampara Tandon","h"],["Kun Faya Kun","A.R. Rahman, Javed Ali, Mohit Chauhan","h"],
+  ["Om Jai Jagdish Hare","Anuradha Paudwal","h"],["Deva Shree Ganesha","Ajay Gogavale","h"]]},
+ {id:"retro",name:"Old is Gold",hue:50,kw:/retro|classic|old|70s|80s|90s|ghazal|oldies/,picks:[
+  ["Lag Jaa Gale","Lata Mangeshkar","h"],["Pal Pal Dil Ke Paas","Kishore Kumar","h"],["Yeh Shaam Mastani","Kishore Kumar","h"],
+  ["Chura Liya Hai Tumne","Asha Bhosle, Mohammed Rafi","h"],["Ek Ladki Ko Dekha","Kumar Sanu","h"],["Hotel California","Eagles","e"],["Bohemian Rhapsody","Queen","e"]]},
+ {id:"focus",name:"Focus & Sleep",hue:250,kw:/instrumental|piano|classical|sleep|focus|study|meditation/,picks:[
+  ["Bollywood Lo-fi Mix","1 hour non-stop","h"],["Krishna Flute – Deep Relax","Bansuri instrumental","h"],["Lo-fi Beats Radio","Lofi Girl (live)","e"],["Relaxing Piano for Sleep","Peder B. Helland","e"]]},
+];
+MOODS.forEach(m=>m.items=m.picks.map(p=>({title:p[0],artist:p[1],lang:p[2]==="h"?"hindi":"english",mood:m.id})));
+const ALL_CHART=[...CHART_HINDI,...FRESH_HINDI,...CHART_ENGLISH,...MOODS.flatMap(m=>m.items).filter((c,i,a)=>a.findIndex(x=>x.title===c.title&&x.artist===c.artist)===i)];
+/* YouTube video IDs (official uploads where available; second ID = fallback) */
+const YTIDS={
+"Arz Kiya Hai (Coke Studio Bharat)":["bP8ATWCvqzw","-BJt4fCAtZE"],"Ashke":["Pd1yGW_g2T8"],"Jo Tum Mere Ho":["ilNt2bikxDI","wmUJwQNGK3k"],
+"Tere Liye":["AlvUuGJccKs","wKp5UQBlFs0"],"Tum Ho Toh (Saiyaara)":["rOUuGvJkBrQ"],"Zaalima":["lpdRqn6xwiM","XvLJYyBTQKA"],
+"Tu Thodi Der Aur Thehar Ja":["UhYYsdOgwKo","FGTv9-oQhIg"],"Apna Bana Le":["ElZfdU54Cp8","u2NAuswnTKs"],"Agar Tum Saath Ho (Tamasha)":["xRb8hxwN5zc","sK7riqg2mr4"],
+"Mast Magan (2 States)":["xitd9mEZIHk","1BLF5dXRzlA"],"Ye Tune Kya Kiya":["w9Qo6p4XsXE","FAOrFGWI_VM"],"For A Reason":["-YlmnPh-6rE"],
+"Chahun Main Ya Naa (Aashiqui 2)":["VdyBtGaspss","E9w2lAuVLsk"],"Saiyaara":["8PbIHTX8QZE","sP3k2VCfVyc"],"Boyfriend":["5GCfYLguTIs","RYXUA32Dx4k"],
+"Be Intehaan":["72kpFGVJyH8","3u4N2MSPS5M"],"Tu Jaane Na":["P8PWN1OmZOA"],"Raabta":["-d9nvq3402M","zlt38OOqwDc"],"Humdard (Ek Villain)":["FJ55SHCzt88","mUPIJCs8-bE"],
+"Yeh Fitoor Mera":["Iqu_W5W4YO4","OsLlPMQ9Uds"],"Fitratein":["PylcNpYMX4A","7TgSw2IrLqo"],"Ishq Jalakar – Karvaan":["8qCVXCFREkQ","PHi-5knjlQ0"],
+"Qubool":["XZjTVt0ilxw","c1xX5Qz3bBQ"],"Gehra Hua":["GX9x62kFsVU","AU5O2l57pTE"],"Poison Baby":["JYRtKF4wknQ","2aetKpwNXfw"],
+"Choosin' Texas":["nUsrYVxrDwI","hLOheGDwD_0"],"Thriller":["sOnqjkJTMaA","4V90AmXnguw"],"Dracula":["0UPDBODtxzw","UvhkjVBBKiU"],"Housewife":["DPEodkHzH-s","yi24DPRG0Sg"],
+"Boston":["Xh0GyxWgKPs","9b6BpKlCsg8"],"Been By Now":["IpEoDLVEqVw","6q5F7UUiXK0"],"Nicole Kidman":["3sB4Iv_tM7U","h-zuG75Ds-w"],"BbY WOW":["fRIhCiUVaKs","ljAH6jNaApU"],
+"Hate That I Made You Love Me":["82-jTNka3uc","v1t4MTqdfyI"],"Stupid Song":["Rt9tW3cMLhI"],"Patient Zero":["mw3kSNIxjqo","BpR280fXISA"],"Expectations":["gsZauX8gwxo","SmzLX_weRMc"],
+"Babydoll":["nb8CnIo_-_A"],"I Just Might":["mrV8kK5t0V8","luotSpkyCVU"],
+"Kala Chashma":["k4yXQkG2s1E"],"London Thumakda":["udra3Mfw2oo"],"Badtameez Dil":["II2EO3Nw4m0","YaaD9meqxhI"],"Abhi Toh Party Shuru Hui Hai":["8LZgzAZ2lpQ","gEom0CyP8tA"],
+"Lungi Dance":["69CEiHfS_mc","IZL6aoVJu2M"],"Naacho Naacho (RRR)":["sAzlWScHTc4","VCQvgWKRMLU"],"Uptown Funk":["OPf0YbXqDm0"],"Levitating":["TUVcZfQe-Kw"],
+"Party Rock Anthem":["KQ6zr6kCPj8"],"Blinding Lights":["4NRXx6U8ABQ"],"Din Shagna Da":["1LVpuWpRs3I","_jJZZFPQOvI"],"Mehendi Laga Ke Rakhna":["-bNwqXvMuB8","7iqNZrEHrLc"],
+"Bole Chudiyan":["IBvg3WeqP1U","pncfRaXjZlw"],"Sajan Ji Ghar Aaye":["8XtXLVylOoU","1oin5mhShxY"],"Morni Banke":["1EadhOBcfI0","MhgURCPNoD0"],"Kabira (Encore)":["cG4ME1stMS4"],
+"Navrai Majhi":["hEHNef66HT0","DviUJZYuwiQ"],"Marry You":["dElRVQFqj-k"],"Perfect":["2Vv-BfVoq4g"],"Thinking Out Loud":["lp-EO5I60KA"],
+"Tum Hi Ho":["IJq0yyWug1k","Umqb9KENgmk"],"Kesariya":["BddP6PYo2gs","W1S9AbHpWFY"],"Raataan Lambiyan":["gvyUuxdRdR4","3EJGAKPifNs"],"Pehla Nasha":["SBfPs-PMGTA","Ki41AKu0iHc"],
+"Tum Se Hi":["mt9xg0mmt28","Cb6wuzOurPc"],"All of Me":["450p7goxZqg"],"Until I Found You":["GxldQ9eX2wo"],"Channa Mereya":["284Ov7ysmfA","z-diRlyLGzo"],
+"Kabhi Alvida Naa Kehna":["O8fIwHfZz2E","nmTp_esz_Q8"],"Tujhe Bhula Diya":["-Hb2DeHvvEg","o-9VdyXZKsQ"],"Someone Like You":["hLQl3WQQoQ0"],"drivers license":["ZmDBbnmKpqQ"],
+"Let Her Go":["RBumgq5yVrA"],"Zinda":["Ax0G_P2dSBw","fP6MNznzVcQ"],"Sultan":["abiL84EAWSY","tzWLrPUnIwY"],"Kar Har Maidaan Fateh":["9iIX4PBplAY","H53LPMYdkl0"],
+"Malhari":["l_MyUGq7pgs","hLar2soqAlc"],"Lose Yourself":["_Yhyp-_hX2s"],"Till I Collapse":["Obim8BYGnOE"],"Eye of the Tiger":["btPJPFnesV4"],"Believer":["7wtfhZwyrcc"],
+"Iktara":["fSS_R91Nimw","ZlOZktsODpA"],"Kho Gaye Hum Kahan":["vt4jX0iRgCg"],"cold/mess":["Il7Nv270zNk","0mrmp8nGps4"],"Baarishein":["PJWemSzExXs","NLKwRW2y-sg"],
+"Sunflower":["ApXoWvfEYVU"],"Riptide":["uJ_1HMAGb4k"],"Banana Pancakes":["m-v-LGOfaKo"],"Deva Shree Ganesha":["RYqJ5w-GrfM"],"Balam Pichkari":["0WtRNGubWGA"],
+"Rang Barse":["Jf92MOkrbEw","q3IHX5ASUa4"],"Shubhaarambh":["dlz09a-pyPE","IC29Um1VTxo"],"Chogada":["asYxxtiWUyw","yr7JFNsz5dU"],"Gallan Goodiyaan":["jCEdTq3j-0U"],
+"Bolo Ta Ra Ra":["BjlkPLaHRf4","h6Ze5Hqa1wA"],"All I Want for Christmas Is You":["yXQViqx6GMY","aAkMkVFwAoo"],"Baar Baar Din Yeh Aaye":["1VgISqRT4l8"],
+"Happy":["ZbZSe6N_BXs"],"Celebration":["3GwjfUFyY6M","TBS6gAtj8gE"],"22":["AgFeZr5ptV8"],"Birthday":["jqYxyd1iSNk","CEUg7OplvIQ"],"Ilahi":["fdubeMFwuGs","hG7dg7dX4hg"],
+"Yun Hi Chala Chal":["259wjv5-5NE","eEeX2QMlSlo"],"Safarnama":["sOhESxhibAM","TRfosj3JvOo"],"Dil Chahta Hai":["mgF6SGtEr6g","9coA7bcpJII"],"Life Is a Highway":["5tXh_MfrMe0"],
+"Take Me Home, Country Roads":["1vrEljMfXYo"],"Sweet Child O' Mine":["1w7OgIMMRc4"],"Hanuman Chalisa":["LUx8wlA_dk8","17ZHT4WbSfw"],"Ram Siya Ram":["Tl4bQBfOtbg","GXWfue9VhTY"],
+"Kun Faya Kun":["T94PHkuydcw"],"Om Jai Jagdish Hare":["3ucCEjXS9n8","NE3SWh9_vR4"],"Lag Jaa Gale":["TFr6G5zveS8","fj4MnkljFXc"],"Pal Pal Dil Ke Paas":["AMuRRXCuy-4","Vabo2KVaEwA"],
+"Yeh Shaam Mastani":["lbfWsIpXsCA","xP2OcqFcKSY"],"Chura Liya Hai Tumne":["XuCp0r3vhPQ","_R7Po4Wpbj8"],"Ek Ladki Ko Dekha":["H5sheEWfsOQ","aPQ0AMgOvqo"],
+"Hotel California":["dLl4PZtxia8","09839DpTctU"],"Bohemian Rhapsody":["fJ9rUzIMcZQ"],"Bollywood Lo-fi Mix":["t8yVk0bm684","HBZbKLjZN-4"],
+"Krishna Flute – Deep Relax":["PnRFjKgiWWU","8tEuTzFnY7o"],"Lo-fi Beats Radio":["jfKfPfyJRdk"],"Relaxing Piano for Sleep":["77ZozI0rw7w","9zRqHj7gDWw"]
+};
+const catId=c=>"c:"+(c.title+"|"+c.artist).toLowerCase().replace(/[^a-z0-9|]+/g,"-");
+const CATALOG=ALL_CHART.map(c=>({id:catId(c),cat:true,title:c.title,artist:c.artist,lang:c.lang,album:"",
+  genre:c.lang==="hindi"?"Bollywood":"Pop",moods:MOODS.filter(m=>m.items.some(i=>i.title===c.title&&i.artist===c.artist)).map(m=>m.id),
+  yt:YTIDS[c.title]||[],artUrl:YTIDS[c.title]?`https://i.ytimg.com/vi/${YTIDS[c.title][0]}/hqdefault.jpg`:""}));
+const catOf=c=>CATALOG.find(x=>x.id===catId(c));
+function songMoods(s){const t=((s.genre||"")+" "+(s.album||"")+" "+s.title).toLowerCase();
+  const auto=MOODS.filter(m=>m.kw.test(t)).map(m=>m.id);return [...new Set([...(s.moods||[]),...auto])].filter(id=>!(s.noMoods||[]).includes(id))}
+
+/* ===================== helpers ===================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=t=>{if(!isFinite(t)||t<0)t=0;t=Math.floor(t);return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")};
+const hash=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)};
+const grad=s=>{const h=hash(s)%360;return `linear-gradient(135deg,hsl(${h} 70% 48%),hsl(${(h+50)%360} 65% 28%))`};
+const splitArtists=a=>String(a||"").toLowerCase().split(/,|&| and | feat\.?| ft\.?| x |\//).map(x=>x.trim()).filter(Boolean);
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+function artHTML(o,cls=""){const letter=esc((o.title||"?").trim()[0]||"♪").toUpperCase();
+  return `<div class="art ${cls}" style="background:${grad(o.title+o.artist)}">${letter}${o.artUrl?`<img src="${o.artUrl}" alt="" loading="lazy" onerror="this.remove()">`:""}</div>`}
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),1800)}
+const I={
+ play:'<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>',
+ pause:'<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>',
+ heart:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-9.5-9.3C1.1 8.3 3.3 5 6.7 5c2 0 3.4 1.1 4.3 2.5h2C13.9 6.1 15.3 5 17.3 5c3.4 0 5.6 3.3 4.2 6.7C19.5 16.4 12 21 12 21z"/></svg>',
+ heartF:'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.3C1.1 8.3 3.3 5 6.7 5c2 0 3.4 1.1 4.3 2.5h2C13.9 6.1 15.3 5 17.3 5c3.4 0 5.6 3.3 4.2 6.7C19.5 16.4 12 21 12 21z"/></svg>',
+ dots:'<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>',
+ ext:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14 21 3M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg>',
+ list:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h13M3 12h13M3 18h9M18 15v6M15 18h6"/></svg>',
+ next:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h12M4 12h12M4 18h7M17 14l4 4-4 4"/></svg>',
+ trash:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>',
+ radio:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"/></svg>',
+};
+
+/* ===================== storage (IndexedDB, optional) ===================== */
+let db=null;
+function idbOpen(){return new Promise(res=>{try{const r=indexedDB.open("dhun",1);
+  r.onupgradeneeded=()=>{r.result.createObjectStore("files");r.result.createObjectStore("kv")};
+  r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
+function idb(store,mode,fn){return new Promise(res=>{if(!db)return res(null);try{const tx=db.transaction(store,mode);const st=tx.objectStore(store);const r=fn(st);
+  tx.oncomplete=()=>res(r&&r.result);tx.onerror=()=>res(null)}catch(e){res(null)}})}
+const saveFile=(id,rec)=>idb("files","readwrite",s=>s.put(rec,id));
+const getFile=id=>idb("files","readonly",s=>s.get(id));
+const delFile=id=>idb("files","readwrite",s=>s.delete(id));
+let saveT;function saveState(){clearTimeout(saveT);saveT=setTimeout(()=>{
+  const songs=S.songs.filter(s=>!s.demo&&!s.cat).map(({artUrl,url,...r})=>r);
+  idb("kv","readwrite",s=>s.put({songs,playlists:S.playlists,liked:[...S.liked],plays:S.plays,history:S.history.slice(-60),auto:S.auto,repeat:S.repeat,shuffle:S.shuffle},"state"));
+},300)}
+
+/* ===================== state ===================== */
+const S={songs:[],playlists:[],liked:new Set(),plays:{},history:[],queue:[],qi:-1,base:[],shuffle:false,repeat:"off",auto:true,filter:"all",lib:"songs"};
+const byId=id=>S.songs.find(s=>s.id===id);
+const audio=$("#audio");
+
+/* ===================== ID3 tag reader ===================== */
+function decodeText(bytes,enc){
+  try{
+    if(enc===0)return new TextDecoder("latin1").decode(bytes);
+    if(enc===3)return new TextDecoder("utf-8").decode(bytes);
+    if(enc===1){if(bytes[0]===0xFE&&bytes[1]===0xFF)return new TextDecoder("utf-16be").decode(bytes.subarray(2));
+      if(bytes[0]===0xFF&&bytes[1]===0xFE)return new TextDecoder("utf-16le").decode(bytes.subarray(2));return new TextDecoder("utf-16le").decode(bytes)}
+    if(enc===2)return new TextDecoder("utf-16be").decode(bytes);
+  }catch(e){}
+  return "";
+}
+const clean=s=>s.replace(/\u0000/g," ").replace(/\s+/g," ").trim();
+async function readTags(file){
+  const out={};
+  try{
+    const head=new Uint8Array(await file.slice(0,10).arrayBuffer());
+    if(head[0]!==0x49||head[1]!==0x44||head[2]!==0x33)return out;
+    const ver=head[3];const size=(head[6]<<21)|(head[7]<<14)|(head[8]<<7)|head[9];
+    const b=new Uint8Array(await file.slice(10,10+size).arrayBuffer());
+    let p=0;const v22=ver===2;const idLen=v22?3:4,hLen=v22?6:10;
+    if(!v22&&(head[5]&0x40)){const ext=ver===4?((b[0]<<21)|(b[1]<<14)|(b[2]<<7)|b[3]):((b[0]<<24)|(b[1]<<16)|(b[2]<<8)|b[3])+4;p=ext}
+    const map={TIT2:"title",TT2:"title",TPE1:"artist",TP1:"artist",TALB:"album",TAL:"album",TCON:"genre",TCO:"genre",TLAN:"lang"};
+    while(p+hLen<b.length){
+      const id=String.fromCharCode(...b.subarray(p,p+idLen));if(!/^[A-Z0-9]+$/.test(id))break;
+      let sz;if(v22)sz=(b[p+3]<<16)|(b[p+4]<<8)|b[p+5];
+      else if(ver===4)sz=(b[p+4]<<21)|(b[p+5]<<14)|(b[p+6]<<7)|b[p+7];
+      else sz=(b[p+4]<<24)|(b[p+5]<<16)|(b[p+6]<<8)|b[p+7];
+      const d=b.subarray(p+hLen,p+hLen+sz);p+=hLen+sz;if(sz<=0)continue;
+      if(map[id]){out[map[id]]=clean(decodeText(d.subarray(1),d[0]))}
+      else if(id==="APIC"||id==="PIC"){
+        const enc=d[0];let q=1,mime="image/jpeg";
+        if(id==="PIC"){q=4}else{let e=q;while(e<d.length&&d[e]!==0)e++;mime=String.fromCharCode(...d.subarray(q,e))||mime;q=e+1}
+        q++; // picture type
+        if(enc===1||enc===2){while(q+1<d.length&&!(d[q]===0&&d[q+1]===0))q+=2;q+=2}else{while(q<d.length&&d[q]!==0)q++;q++}
+        if(!out.art)out.art=new Blob([d.subarray(q)],{type:mime.includes("/")?mime:"image/jpeg"});
+      }
+    }
+    if(out.genre)out.genre=out.genre.replace(/^\((\d+)\)/,"").trim();
+  }catch(e){}
+  return out;
+}
+function guessLang(s){
+  const t=(s.genre+" "+s.album+" "+s.title+" "+s.artist+" "+(s.lang||"")).toLowerCase();
+  if(/hindi|bollywood|punjabi|filmi|ghazal|desi|sufi|hin\b|arijit|shreya|atif|pritam|kishore|lata|rafi|sonu nigam|neha kakkar|jubin|vishal mishra|badshah|diljit|karan aujla|anuv jain|t-series/.test(t))return "hindi";
+  if(/[ऀ-ॿ]/.test(t))return "hindi";
+  if(/pop|rock|hip|rap|r&b|country|edm|dance|indie|jazz|eng/.test(t))return "english";
+  return "";
+}
+
+/* ===================== add songs ===================== */
+$("#addBtn").onclick=()=>$("#fileIn").click();
+$("#fileIn").onchange=async e=>{
+  const files=[...e.target.files];if(!files.length)return;toast(`Adding ${files.length} song${files.length>1?"s":""}…`);
+  for(const f of files){
+    const tags=await readTags(f);let title=tags.title,artist=tags.artist;
+    if(!title){const base=f.name.replace(/\.[^.]+$/,"").replace(/_/g," ");const m=base.split(/\s+-\s+/);
+      if(m.length>=2){artist=artist||m[0];title=m.slice(1).join(" - ")}else title=base}
+    const s={id:uid(),title:title.trim(),artist:(artist||"Unknown artist").trim(),album:tags.album||"",genre:tags.genre||"",added:Date.now(),dur:0};
+    s.lang=guessLang({...s,lang:tags.lang});
+    s.url=URL.createObjectURL(f);if(tags.art)s.artUrl=URL.createObjectURL(tags.art);
+    S.songs.push(s);saveFile(s.id,{audio:f,art:tags.art||null});
+  }
+  e.target.value="";saveState();renderAll();toast("Songs added to your library");
+  if(S.qi<0){const own=S.songs.filter(s=>!s.demo);playList(own.map(s=>s.id),0,false)}
+};
+
+/* ===================== demo tracks (synth, original) ===================== */
+function makeDemo(seed,bpm,scale,root,len=36){
+  const sr=22050,n=sr*len,buf=new Int16Array(n);const beat=60/bpm;
+  const rnd=(()=>{let x=seed;return()=>((x=(x*1103515245+12345)&0x7fffffff)/0x7fffffff)})();
+  const prog=[0,5,3,4];const mel=[];for(let i=0;i<64;i++)mel.push(Math.floor(rnd()*scale.length));
+  const f=m=>440*Math.pow(2,(m-69)/12);
+  for(let i=0;i<n;i++){
+    const t=i/sr,b=t/beat,bar=Math.floor(b/4)%4,ch=scale[prog[bar]%scale.length]+root;
+    let v=0;
+    [0,scale[2]-scale[0]+0,7].forEach((iv,k)=>{v+=0.07*Math.sin(2*Math.PI*f(ch+[0,4,7][k]-12)*t)});
+    const st=Math.floor(b*2),ph=(b*2)%1,note=scale[mel[st%64]]+root+12;
+    v+=0.16*Math.sin(2*Math.PI*f(note)*t+0.6*Math.sin(2*Math.PI*f(note)*2*t))*Math.exp(-ph*3.2);
+    const bp=b%1;v+=0.32*Math.sin(2*Math.PI*(55+90*Math.exp(-bp*28))*bp*beat)*Math.exp(-bp*9);
+    if(Math.floor(b)%2===1)v+=0.05*(rnd()*2-1)*Math.exp(-bp*22);
+    const fade=Math.min(1,t/1.5,(len-t)/2.5);buf[i]=Math.max(-1,Math.min(1,v*fade))*28000;
+  }
+  const hdr=new DataView(new ArrayBuffer(44));const w=(o,s)=>{for(let i=0;i<4;i++)hdr.setUint8(o+i,s.charCodeAt(i))};
+  w(0,"RIFF");hdr.setUint32(4,36+n*2,true);w(8,"WAVE");w(12,"fmt ");hdr.setUint32(16,16,true);hdr.setUint16(20,1,true);hdr.setUint16(22,1,true);
+  hdr.setUint32(24,sr,true);hdr.setUint32(28,sr*2,true);hdr.setUint16(32,2,true);hdr.setUint16(34,16,true);w(36,"data");hdr.setUint32(40,n*2,true);
+  return URL.createObjectURL(new Blob([hdr,buf],{type:"audio/wav"}));
+}
+const DEMOS=[
+  {title:"Monsoon Evening",artist:"Dhun Demo",genre:"Lo-fi Bollywood",lang:"hindi",moods:["chill","focus"],args:[7,84,[0,2,4,7,9],57]},
+  {title:"Midnight Drive",artist:"Dhun Demo",genre:"Synth Pop",lang:"english",moods:["roadtrip","party"],args:[21,112,[0,2,3,5,7,8,10],52]},
+  {title:"Chai Break",artist:"Dhun Demo",genre:"Indie",lang:"hindi",moods:["chill","romantic"],args:[42,96,[0,2,4,5,7,9,11],60]},
+];
+function ensureDemoUrl(s){if(s.demo&&!s.url){s.url=makeDemo(...s.args)}}
+
+/* ===================== recommendations ===================== */
+function topArtists(){
+  const sc={};S.songs.forEach(s=>{const w=(S.plays[s.id]||0)+(S.liked.has(s.id)?3:0)+(s.demo?0:0.5);
+    splitArtists(s.artist).forEach(a=>{if(a!=="unknown artist"&&a!=="dhun demo")sc[a]=(sc[a]||0)+w})});
+  return Object.entries(sc).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+}
+function similarScore(a,b){
+  if(a.id===b.id)return -1;let s=0;const aa=splitArtists(a.artist),ba=splitArtists(b.artist);
+  if(aa.some(x=>ba.includes(x))&&!aa.includes("unknown artist"))s+=4;
+  if(a.genre&&b.genre&&a.genre.toLowerCase()===b.genre.toLowerCase())s+=2.5;
+  if(a.album&&a.album===b.album)s+=1.5;
+  if(a.lang&&a.lang===b.lang)s+=1.5;
+  const am=songMoods(a),bm=songMoods(b);s+=1.2*am.filter(x=>bm.includes(x)).length;
+  if(S.liked.has(b.id))s+=1;s+=Math.min(2,(S.plays[b.id]||0)*0.25);
+  const recent=S.history.slice(-8);if(recent.includes(b.id))s-=3;
+  return s+Math.random()*0.6;
+}
+function similarTo(song,n=6,exclude=[]){
+  return S.songs.filter(s=>!exclude.includes(s.id)&&s.id!==song.id).map(s=>[s,similarScore(song,s)]).sort((x,y)=>y[1]-x[1]).slice(0,n).map(x=>x[0]);
+}
+function madeForYou(){
+  const tops=topArtists().slice(0,4);const pool=S.songs.filter(s=>!s.demo&&canPlay(s)&&(!s.cat||S.plays[s.id]||S.liked.has(s.id)||splitArtists(s.artist).some(a=>tops.includes(a))));
+  return pool.map(s=>{let sc=(S.plays[s.id]||0)*0.3+(S.liked.has(s.id)?2:0)+(splitArtists(s.artist).some(a=>tops.includes(a))?2:0)+Math.random();return[s,sc]})
+    .sort((a,b)=>b[1]-a[1]).slice(0,12).map(x=>x[0]);
+}
+
+/* ===================== YouTube engine ===================== */
+let yt=null,ytReady=false,ytFailed=false,ytState=-1,engine="audio";
+const canPlay=s=>!!s&&(!s.cat||(ytReady&&s.yt.length>0));
+window.onYouTubeIframeAPIReady=()=>{try{
+  yt=new YT.Player("ytFrame",{width:"100%",height:"100%",playerVars:{playsinline:1,rel:0,modestbranding:1,origin:location.origin},
+    events:{onReady:()=>{ytReady=true;document.body.classList.add("yt-ok");renderAll()},
+      onStateChange:e=>{ytState=e.data;if(e.data===0&&engine==="yt")onEnded();
+        if(e.data===1&&engine==="yt"){const s=cur();if(s)s.ytOk=true}updateNow()},
+      onError:onYtError}})}catch(e){console.warn("yt init",e);ytFailed=true}};
+(function(){const t=document.createElement("script");t.src="https://www.youtube.com/iframe_api";t.onerror=()=>{ytFailed=true;renderAll()};document.head.appendChild(t);
+  setTimeout(()=>{if(!ytReady){ytFailed=true;renderAll()}},9000)})();
+function onYtError(){const s=cur();if(!s||engine!=="yt")return;s._yi=(s._yi||0)+1;
+  if(s._yi<s.yt.length){yt.loadVideoById(s.yt[s._yi]);return}
+  toast("“"+s.title+"” can't play inside Dhun – skipping");s.yt=[];
+  if(S.qi<S.queue.length-1){S.qi++;load()}else{updateNow()}}
+const isPlaying=()=>engine==="yt"?(ytState===1||ytState===3):!audio.paused;
+const getDur=()=>engine==="yt"?(yt&&yt.getDuration?yt.getDuration():0):(audio.duration||0);
+const getTime=()=>engine==="yt"?(yt&&yt.getCurrentTime?yt.getCurrentTime():0):(audio.currentTime||0);
+function setTime(t){if(engine==="yt")yt&&yt.seekTo(t,true);else audio.currentTime=t}
+function doPlay(){if(engine==="yt")yt&&yt.playVideo();else audio.play().catch(()=>{})}
+function doPause(){if(engine==="yt")yt&&yt.pauseVideo();else audio.pause()}
+
+/* ===================== playback ===================== */
+function playList(ids,start=0,autoplay=true){
+  const startId=ids[start];ids=ids.filter(id=>canPlay(byId(id))||id===startId);start=Math.max(0,ids.indexOf(startId));
+  S.base=[...ids];S.queue=[...ids];S.qi=start;
+  if(S.shuffle){const c=S.queue[start];const rest=S.queue.filter((_,i)=>i!==start).sort(()=>Math.random()-.5);S.queue=[c,...rest];S.qi=0}
+  load(autoplay);
+}
+function playSong(id,contextIds){const s=byId(id);if(s&&s.cat&&!canPlay(s)){chartSheet(s);return}
+  const ids=contextIds||[id];playList(ids,Math.max(0,ids.indexOf(id)))}
+function cur(){return byId(S.queue[S.qi])}
+async function load(autoplay=true){
+  const s=cur();if(!s)return;
+  if(s.cat){
+    if(!canPlay(s)){if(S.qi<S.queue.length-1){S.qi++;return load(autoplay)}return}
+    engine="yt";audio.pause();s._yi=0;document.body.classList.add("vid");
+    if(autoplay)yt.loadVideoById(s.yt[0]);else yt.cueVideoById(s.yt[0]);
+  }else{
+    if(yt&&yt.pauseVideo)try{yt.pauseVideo()}catch(e){}
+    engine="audio";document.body.classList.remove("vid");
+    if(s.demo)ensureDemoUrl(s);
+    if(!s.url){const rec=await getFile(s.id);if(rec&&rec.audio){s.url=URL.createObjectURL(rec.audio);if(rec.art&&!s.artUrl)s.artUrl=URL.createObjectURL(rec.art)}}
+    if(!s.url){toast("This song's file is missing – please add it again");return}
+    audio.src=s.url;if(autoplay){try{await audio.play()}catch(e){}}
+  }
+  S.history.push(s.id);S.plays[s.id]=(S.plays[s.id]||0)+1;saveState();
+  updateNow();renderUpNext();renderHomeLib();
+  try{if("mediaSession"in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:s.title,artist:s.artist,album:s.album||"Dhun",artwork:s.artUrl?[{src:s.artUrl,sizes:"480x360"}]:[]})}}catch(e){}
+}
+function toggle(){if(!cur())return;if(isPlaying())doPause();else doPlay()}
+function onEnded(){if(sleepAfterSong){sleepAfterSong=false;$("#sleepBtn").classList.remove("timer-on");updateNow();toast("Sleep timer: stopped");return}next(false)}
+function next(user=true){
+  if(!S.queue.length)return;
+  if(!user&&S.repeat==="one"){setTime(0);doPlay();return}
+  if(S.qi<S.queue.length-1){S.qi++;load();return}
+  if(S.repeat==="all"){S.qi=0;load();return}
+  if(S.auto){const s=cur();const sim=similarTo(s,1,S.history.slice(-8)).filter(canPlay);
+    if(sim.length){S.queue.push(sim[0].id);S.qi++;load();toast("Autoplay: "+sim[0].title);return}}
+  if(user){S.qi=0;load()}else{doPause();updateNow()}
+}
+function prev(){if(getTime()>3){setTime(0);return}if(S.qi>0){S.qi--;load()}else{setTime(0)}}
+function setShuffle(on){S.shuffle=on;const c=S.queue[S.qi];
+  if(on){const rest=S.queue.filter((_,i)=>i>S.qi).sort(()=>Math.random()-.5);S.queue=[...S.queue.slice(0,S.qi+1),...rest]}
+  else if(c){const i=S.base.indexOf(c);if(i>=0){S.queue=[...S.base];S.qi=i}}
+  saveState();updateNow();renderUpNext()}
+function cycleRepeat(){S.repeat={off:"all",all:"one",one:"off"}[S.repeat];toast({off:"Repeat off",all:"Repeat all",one:"Repeat this song"}[S.repeat]);saveState();updateNow()}
+function like(id){if(S.liked.has(id)){S.liked.delete(id);toast("Removed from Liked songs")}else{S.liked.add(id);toast("Added to Liked songs")}saveState();updateNow();renderLib();renderHomeLib()}
+
+audio.addEventListener("ended",()=>{if(engine==="audio")onEnded()});
+audio.addEventListener("play",updateNow);audio.addEventListener("pause",updateNow);
+audio.addEventListener("loadedmetadata",()=>{const s=cur();if(s&&!s.cat&&isFinite(audio.duration)){s.dur=audio.duration;saveState()}});
+let seeking=false;const sk=$("#seek");
+function tick(){const d=getDur(),c=getTime();
+  if(!seeking)sk.value=d?c/d*1000:0;$("#tCur").textContent=fmt(c);$("#tDur").textContent=fmt(d);$("#miniBar").style.width=(d?c/d*100:0)+"%";
+  try{if(d&&navigator.mediaSession&&navigator.mediaSession.setPositionState)navigator.mediaSession.setPositionState({duration:d,position:Math.min(c,d),playbackRate:1})}catch(e){}}
+setInterval(tick,500);
+sk.addEventListener("input",()=>{seeking=true;$("#tCur").textContent=fmt((sk.value/1000)*getDur())});
+sk.addEventListener("change",()=>{const d=getDur();if(d)setTime(sk.value/1000*d);seeking=false});
+try{const ms=navigator.mediaSession;ms.setActionHandler("play",doPlay);ms.setActionHandler("pause",doPause);
+  ms.setActionHandler("nexttrack",()=>next());ms.setActionHandler("previoustrack",()=>prev());
+  ms.setActionHandler("seekto",e=>setTime(e.seekTime))}catch(e){}
+
+/* ===================== now-playing UI ===================== */
+function updateNow(){
+  const s=cur();$("#mini").classList.toggle("on",!!s);if(!s)return;
+  const playing=isPlaying();
+  $("#miniArt").outerHTML=artHTML(s).replace('class="art ','id="miniArt" class="art ');
+  $("#miniTitle").textContent=s.title;$("#miniArtist").textContent=s.artist;
+  $("#miniPlay").innerHTML=playing?I.pause.replace(/28/g,"24"):I.play.replace(/28/g,"24");
+  const lk=S.liked.has(s.id);$("#miniLike").innerHTML=lk?I.heartF:I.heart;$("#miniLike").classList.toggle("liked",lk);
+  $("#pArt").outerHTML=artHTML(s,"bigart").replace('class="art ','id="pArt" class="art ');
+  $("#pTitle").textContent=s.title;$("#pArtist").textContent=s.artist+(s.album?" · "+s.album:"");
+  $("#pLike").innerHTML=lk?I.heartF:I.heart;$("#pLike").classList.toggle("liked",lk);
+  $("#play").innerHTML=playing?I.pause:I.play;
+  $("#shuf").classList.toggle("on",S.shuffle);$("#rep").classList.toggle("on",S.repeat!=="off");$("#repOne").classList.toggle("hidden",S.repeat!=="one");
+  $("#autoSw").classList.toggle("on",S.auto);
+  $("#player").style.setProperty("--pc",`hsl(${hash(s.title+s.artist)%360} 45% 26%)`);
+  document.querySelectorAll(".item[data-id]").forEach(el=>el.classList.toggle("playing",el.dataset.id===s.id));
+}
+function renderUpNext(){
+  const s=cur();if(!s){$("#upList").innerHTML="";return}
+  const nextIds=S.queue.slice(S.qi+1,S.qi+6);let html=nextIds.map(id=>songRow(byId(id),{ctx:"queue"})).join("");
+  if(!nextIds.length&&S.repeat==="all")html=`<div class="note" style="padding:4px 0">Queue will start again from the top.</div>`;
+  const sim=similarTo(s,8,[...nextIds,s.id]).filter(x=>canPlay(x)||!ytReady).slice(0,6);
+  if(sim.length)html+=`<h4 style="margin-top:14px"><span>Similar to this song</span></h4>`+sim.map(x=>songRow(x,{ctx:"sim"})).join("");
+  $("#upList").innerHTML=html;
+}
+
+/* ===================== rendering ===================== */
+function songRow(s,o={}){if(!s)return"";const lk=S.liked.has(s.id);
+  return `<div class="item" data-id="${s.id}" data-ctx="${o.ctx||""}" role="button">${o.rank?`<span class="rank">${o.rank}</span>`:""}${artHTML(s)}<div class="meta"><b>${esc(s.title)}</b><span>${lk?"♥ ":""}${esc(s.artist)}${s.genre?" · "+esc(s.genre):""}</span></div><button class="more" data-more="${s.id}">${I.dots}</button></div>`}
+function chartRow(c,showRank){return `<button class="item" data-chart="${esc(c.title)}|${esc(c.artist)}">${showRank?`<span class="rank">${c.rank}</span>`:""}${artHTML(c)}<div class="meta"><b>${esc(c.title)}</b><span>${esc(c.artist)}</span></div><span class="more">${I.ext}</span></button>`}
+function card(o,attr){return `<button class="card" ${attr}>${artHTML(o)}<b>${esc(o.title)}</b><span>${esc(o.artist)}</span></button>`}
+
+function renderHomeLib(){
+  const f=S.filter,own=S.songs.filter(s=>!s.demo&&!s.cat),hasOwn=own.length>0;let html="";
+  const pass=s=>f==="all"||s.lang===f||!s.lang;
+  if(ytReady&&!S.history.length){html+=`<div class="hero" style="margin-top:14px"><h3>Tap any song to play it here</h3><p>100+ trending Hindi &amp; English hits and mood playlists play right inside Dhun. You can also add MP3s from your phone.</p><div class="btns"><button class="btn" data-act="top">${I.play.replace(/28/g,"16")}Play Top Hindi</button><button class="btn ghost" data-act="add">Add my songs</button></div></div>`}
+  else if(!hasOwn&&!ytReady){html+=`<div class="hero" style="margin-top:14px"><h3>Make Dhun yours</h3><p>Add Hindi and English songs from your phone (MP3, M4A, WAV). Dhun plays them, and learns your taste to suggest what's next.</p><div class="btns"><button class="btn" data-act="add">Add songs</button><button class="btn ghost" data-act="demo">Try a demo</button></div></div>`}
+  const recent=[...new Set(S.history.slice().reverse())].map(byId).filter(Boolean).filter(pass).slice(0,10);
+  if(recent.length)html+=`<h2>Recently played</h2><div class="row">${recent.map(s=>card(s,`data-play="${s.id}"`)).join("")}</div>`;
+  if(hasOwn||S.history.length){const mfy=madeForYou().filter(pass);if(mfy.length)html+=`<h2>Made for you<small>A mix from the artists you play most</small></h2><div class="row">${mfy.map(s=>card(s,`data-play="${s.id}" data-group="mfy"`)).join("")}</div>`;
+    const tops=topArtists().slice(0,3);
+    tops.forEach(a=>{const pool=S.songs.filter(s=>!s.demo&&splitArtists(s.artist).includes(a)).filter(pass);
+      if(pool.length>1)html+=`<h2>More of ${esc(a.replace(/\b\w/g,c=>c.toUpperCase()))}</h2><div class="row">${pool.map(s=>card(s,`data-play="${s.id}"`)).join("")}</div>`})}
+  if(!hasOwn&&!ytReady)html+=`<h2>Demo tracks<small>Original instrumental tunes to try the player</small></h2><div class="list">${S.songs.filter(s=>s.demo).map(s=>songRow(s,{ctx:"demo"})).join("")}</div>`;
+  $("#homeLib").innerHTML=html;
+  $("#homeNote").innerHTML=ytReady?"Songs play inside Dhun through YouTube's official player. Use ⋮ on any song for Spotify or JioSaavn.":(ytFailed?"In-app streaming isn't available on this page, so chart songs open in YouTube, Spotify or JioSaavn. Songs you add yourself play right here.":"Loading the player…");
+  document.querySelectorAll('#v-home [data-lang]').forEach(el=>el.classList.toggle("hidden",f!=="all"&&el.dataset.lang!==f));
+  updateNow();
+}
+function renderCharts(){
+  $("#chartHindi").innerHTML=CHART_HINDI.map(c=>songRow(catOf(c),{rank:c.rank})).join("");
+  $("#freshHindi").innerHTML=FRESH_HINDI.map(c=>card(catOf(c),`data-play="${catOf(c).id}"`)).join("");
+  $("#chartEnglish").innerHTML=CHART_ENGLISH.map(c=>songRow(catOf(c),{rank:c.rank})).join("");
+}
+/* ===================== daily new releases (new.json, refreshed by GitHub Actions) ===================== */
+let NEW=null;
+const ago=d=>{const days=Math.floor((Date.now()-new Date(d))/864e5);return days<=0?"today":days===1?"yesterday":days<7?days+" days ago":Math.floor(days/7)+" wk ago"};
+const fmtViews=v=>v>=1e6?(v/1e6).toFixed(1).replace(/\.0$/,"")+"M views":v>=1e3?Math.round(v/1e3)+"K views":v?v+" views":"";
+async function loadNew(){
+  try{const r=await fetch("new.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const j=await r.json();if(!j.songs||!j.songs.length)return;
+    NEW=j;j.songs.forEach(n=>{const id="n:"+n.id;if(byId(id))return;
+      const s={id,cat:true,fresh:true,title:n.title,artist:n.artist,lang:n.lang,album:"",genre:n.lang==="hindi"?"New Bollywood":"New Pop",moods:[],
+        yt:[n.id],artUrl:`https://i.ytimg.com/vi/${n.id}/hqdefault.jpg`,published:n.published,views:n.views,channel:n.channel};
+      CATALOG.push(s);S.songs.push(s)});
+    renderNew();renderAll()}catch(e){}
+}
+function renderNew(){
+  if(!NEW){$("#newSec").innerHTML="";return}
+  const fresh=S.songs.filter(s=>s.fresh&&canPlay(s));let html="";
+  ["hindi","english"].forEach(l=>{const list=fresh.filter(s=>s.lang===l).sort((a,b)=>b.published.localeCompare(a.published)).slice(0,15);
+    if(list.length)html+=`<div data-lang="${l}"><h2>New ${l==="hindi"?"Hindi":"English"} releases<small>Auto-updated daily · last update ${ago(NEW.updated)}</small></h2><div class="row">${list.map(s=>card({...s,artist:s.artist+" · "+ago(s.published)},`data-play="${s.id}"`)).join("")}</div></div>`});
+  const hot=fresh.filter(s=>s.views).sort((a,b)=>b.views-a.views).slice(0,10);
+  if(hot.length)html+=`<h2>Most watched new songs<small>Biggest new releases by YouTube views</small></h2><div class="list">${hot.map((s,i)=>songRow({...s,genre:fmtViews(s.views)},{rank:i+1})).join("")}</div>`;
+  $("#newSec").innerHTML=html;
+}
+function moodTile(m){const n=S.songs.filter(s=>!s.cat&&!s.demo&&songMoods(s).includes(m.id)).length;
+  return `<button class="mood" data-mood="${m.id}" style="background:linear-gradient(135deg,hsl(${m.hue} 70% 45%),hsl(${(m.hue+40)%360} 60% 25%))">${esc(m.name)}<small>${n?n+" of your songs · ":""}${m.items.length} picks</small></button>`}
+function renderMoods(){$("#moodRow").innerHTML=MOODS.map(moodTile).join("")}
+function openMood(id){
+  const m=MOODS.find(x=>x.id===id);const f=S.filter;
+  const mine=S.songs.filter(s=>!s.cat&&!s.demo&&songMoods(s).includes(id));
+  const picks=m.items.filter(c=>f==="all"||c.lang===f).map(catOf);
+  const all=[...mine,...picks].filter(s=>canPlay(s)).map(s=>s.id);
+  openSheet(`<div style="padding:4px 6px 10px;border-radius:12px;background:linear-gradient(135deg,hsl(${m.hue} 60% 30%),transparent)">
+     <div style="font-weight:800;font-size:22px;padding-top:6px">${esc(m.name)}</div>
+     <div style="color:#d8d0cc;font-size:13px">${mine.length?mine.length+" of your songs · ":""}${m.items.length} popular picks</div>
+     <div class="btns" style="margin-top:12px">${all.length?`<button class="btn" data-g="play">${I.play.replace(/28/g,"16")}Play</button><button class="btn ghost" data-g="shuf">Shuffle</button>`:""}
+     <a class="btn ghost" style="text-decoration:none" href="https://www.youtube.com/results?search_query=${encodeURIComponent(m.name+" songs playlist hindi english")}" target="_blank" rel="noopener">${I.ext.replace(/20/g,"16")}Full playlist on YouTube</a></div></div>
+   ${mine.length?`<h2 style="margin:16px 6px 6px">From your library</h2>${mine.map(s=>songRow(s,{ctx:"group"})).join("")}`:""}
+   <h2 style="margin:18px 6px 6px">Popular ${esc(m.name)} picks</h2>${picks.map(s=>songRow(s,{ctx:"group"})).join("")}
+   <div class="note" style="padding:12px 6px 0">Tip: use ⋮ › <b>Add to mood</b> on any song to put it in a mood.</div>`);
+  $("#sheetBody").onclick=e=>{const ids=all;const g=e.target.closest("[data-g]");
+    if(g){if(g.dataset.g==="shuf"&&!S.shuffle)setShuffle(true);playList(ids,g.dataset.g==="shuf"?Math.floor(Math.random()*ids.length):0);closeSheet();toast(m.name+" mix");return}
+    const mo=e.target.closest("[data-more]");if(mo){songSheet(mo.dataset.more);return}
+    const ch=e.target.closest("[data-chart]");if(ch){const[t,a]=ch.dataset.chart.split("|");chartSheet(ALL_CHART.find(c=>c.title===t&&c.artist===a));return}
+    const it=e.target.closest(".item[data-id]");if(it){const s=byId(it.dataset.id);playSong(it.dataset.id,ids.includes(it.dataset.id)?ids:[it.dataset.id]);if(canPlay(s))closeSheet()}};
+}
+function moodSheet(id){const s=byId(id);const cur=songMoods(s);
+  openSheet(`<div style="font-weight:700;padding:4px 6px 4px">Add “${esc(s.title)}” to moods</div><div class="note" style="padding:0 6px 8px">Tap to switch on or off.</div>
+   ${MOODS.map(m=>`<button class="opt" data-mt="${m.id}"><span style="width:20px;height:20px;border-radius:6px;flex:none;background:${cur.includes(m.id)?`hsl(${m.hue} 70% 50%)`:"var(--bg3)"};display:grid;place-items:center;font-size:13px">${cur.includes(m.id)?"✓":""}</span>${esc(m.name)}</button>`).join("")}`);
+  $("#sheetBody").onclick=e=>{const b=e.target.closest("[data-mt]");if(!b)return;const mid=b.dataset.mt;
+    s.moods=s.moods||[];s.noMoods=s.noMoods||[];
+    if(songMoods(s).includes(mid)){s.moods=s.moods.filter(x=>x!==mid);s.noMoods.push(mid)}else{s.noMoods=s.noMoods.filter(x=>x!==mid);s.moods.push(mid)}
+    saveState();renderMoods();moodSheet(id)};
+}
+/* sleep timer */
+let sleepT=null,sleepEnd=0,sleepAfterSong=false;
+function sleepSheet(){
+  const left=sleepEnd?Math.max(0,Math.round((sleepEnd-Date.now())/60000)):0;
+  openSheet(`<div style="font-weight:700;padding:4px 6px 4px">Sleep timer</div><div class="note" style="padding:0 6px 8px">${sleepT?`Music stops in about ${left} min.`:sleepAfterSong?"Music stops when this song ends.":"Music keeps playing."}</div>
+   ${[5,15,30,45,60].map(n=>`<button class="opt" data-sl="${n}">${n} minutes</button>`).join("")}
+   <button class="opt" data-sl="song">End of this song</button>${sleepT||sleepAfterSong?`<button class="opt" data-sl="off" style="color:#ff6b6b">Turn off timer</button>`:""}`);
+  $("#sheetBody").onclick=e=>{const b=e.target.closest("[data-sl]");if(!b)return;const v=b.dataset.sl;
+    clearTimeout(sleepT);sleepT=null;sleepEnd=0;sleepAfterSong=false;
+    if(v==="song"){sleepAfterSong=true;toast("Stopping after this song")}
+    else if(v!=="off"){const ms=+v*60000;sleepEnd=Date.now()+ms;sleepT=setTimeout(()=>{audio.pause();sleepT=null;sleepEnd=0;updateNow();toast("Sleep timer: paused")},ms);toast(`Sleep timer: ${v} min`)}
+    else toast("Sleep timer off");
+    $("#sleepBtn").classList.toggle("timer-on",!!(sleepT||sleepAfterSong));closeSheet()};
+}
+function renderLib(){
+  const own=S.songs.filter(s=>!s.demo&&!s.cat);let html="";
+  if(S.lib==="songs"){html=own.length?`<div class="list">${own.slice().sort((a,b)=>a.title.localeCompare(b.title)).map(s=>songRow(s,{ctx:"all"})).join("")}</div>`
+    :`<div class="empty">No songs yet. Tap <b>Add songs</b> and pick music files from your phone – they stay on this device.</div>`}
+  if(S.lib==="liked"){const l=S.songs.filter(s=>S.liked.has(s.id));
+    html=l.length?`<div style="padding:0 18px 8px"><button class="btn" data-act="playliked">${I.play.replace(/28/g,"16")}Play liked songs</button></div><div class="list">${l.map(s=>songRow(s,{ctx:"liked"})).join("")}</div>`:`<div class="empty">Tap the ♥ on any song to save it here.</div>`}
+  if(S.lib==="playlists"){html=S.playlists.length?`<div class="list">${S.playlists.map(p=>`<button class="item" data-pl="${p.id}"><div class="art" style="background:${grad(p.name)}">${esc(p.name[0]||"P").toUpperCase()}</div><div class="meta"><b>${esc(p.name)}</b><span>Playlist · ${p.songIds.length} songs</span></div></button>`).join("")}</div>`:`<div class="empty">Create a playlist, then use ⋮ on any song to add it.</div>`}
+  if(S.lib==="artists"){const m={};own.forEach(s=>{(m[s.artist]=m[s.artist]||[]).push(s)});const ks=Object.keys(m).sort();
+    html=ks.length?`<div class="list">${ks.map(a=>`<button class="item" data-artist="${esc(a)}"><div class="art" style="border-radius:50%;background:${grad(a)}">${esc(a[0]).toUpperCase()}</div><div class="meta"><b>${esc(a)}</b><span>${m[a].length} song${m[a].length>1?"s":""}</span></div></button>`).join("")}</div>`:`<div class="empty">Artists from your songs will show here.</div>`}
+  $("#libOut").innerHTML=html;updateNow();
+}
+function renderSearch(){
+  const q=$("#q").value.trim().toLowerCase();let html="";
+  if(!q){html=`<h2>Moods &amp; occasions</h2><div class="moods">${MOODS.map(moodTile).join("")}</div><h2>Popular artists</h2><div class="list">${["Arijit Singh","Atif Aslam","Karan Aujla","Anuv Jain","Taylor Swift","Olivia Rodrigo"].map(a=>`<button class="item" data-q="${a}"><div class="art" style="border-radius:50%;background:${grad(a)}">${a[0]}</div><div class="meta"><b>${a}</b><span>Artist</span></div></button>`).join("")}</div>`}
+  else{
+    const m=s=>(s.title+" "+s.artist+" "+(s.album||"")+" "+(s.genre||"")).toLowerCase().includes(q);
+    const mine=S.songs.filter(x=>!x.cat&&m(x)),ch=CATALOG.filter(m);
+    if(mine.length)html+=`<h2>In your library</h2><div class="list">${mine.map(s=>songRow(s,{ctx:"search"})).join("")}</div>`;
+    if(ch.length)html+=`<h2>Songs</h2><div class="list">${ch.map(c=>songRow(c,{ctx:"search"})).join("")}</div>`;
+    const enc=encodeURIComponent($("#q").value.trim());
+    html+=`<h2>Search everywhere</h2><div class="list">
+      <a class="item" href="https://www.youtube.com/results?search_query=${enc}" target="_blank" rel="noopener"><div class="art" style="background:#c4302b">▶</div><div class="meta"><b>Search “${esc($("#q").value.trim())}” on YouTube</b><span>Watch &amp; listen free</span></div><span class="more">${I.ext}</span></a>
+      <a class="item" href="https://open.spotify.com/search/${enc}" target="_blank" rel="noopener"><div class="art" style="background:#1db954">S</div><div class="meta"><b>Search on Spotify</b><span>Opens the Spotify app</span></div><span class="more">${I.ext}</span></a>
+      <a class="item" href="https://www.jiosaavn.com/search/${enc}" target="_blank" rel="noopener"><div class="art" style="background:#2bc5b4">J</div><div class="meta"><b>Search on JioSaavn</b><span>Best for Hindi &amp; regional</span></div><span class="more">${I.ext}</span></a></div>`;
+  }
+  $("#searchOut").innerHTML=html;updateNow();
+}
+function renderAll(){renderNew();renderMoods();renderHomeLib();renderLib();renderSearch();renderUpNext()}
+
+/* ===================== sheets ===================== */
+function openSheet(html){$("#sheetBody").innerHTML=html;$("#sheet").classList.add("on");$("#scrim").classList.add("on")}
+function closeSheet(){$("#sheet").classList.remove("on");$("#scrim").classList.remove("on")}
+$("#scrim").onclick=closeSheet;
+function chartSheet(c){
+  const q=encodeURIComponent(c.title.replace(/\(.*?\)/g,"")+" "+splitArtists(c.artist)[0]);
+  const like=encodeURIComponent("songs like "+c.title.replace(/\(.*?\)/g,"")+" "+c.artist);
+  openSheet(`<div class="head">${artHTML(c)}<div class="meta" style="min-width:0"><b style="display:block">${esc(c.title)}</b><span style="color:var(--muted);font-size:13px">${esc(c.artist)}</span></div></div>
+   <a class="opt" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener"><span style="width:20px;color:#ff4e45">▶</span>Play on YouTube</a>
+   <a class="opt" href="https://music.youtube.com/search?q=${q}" target="_blank" rel="noopener"><span style="width:20px;color:#ff4e45">♫</span>Play on YouTube Music</a>
+   <a class="opt" href="https://open.spotify.com/search/${q}" target="_blank" rel="noopener"><span style="width:20px;color:#1db954">●</span>Play on Spotify</a>
+   <a class="opt" href="https://www.jiosaavn.com/search/${q}" target="_blank" rel="noopener"><span style="width:20px;color:#2bc5b4">●</span>Play on JioSaavn</a>
+   <a class="opt" href="https://www.youtube.com/results?search_query=${like}" target="_blank" rel="noopener">${I.radio}Find similar songs</a>
+   <div class="note" style="padding:8px 6px 0">Already have this song as a file? Add it under Your Library to play it in Dhun.</div>`);
+}
+function songSheet(id){
+  const s=byId(id);if(!s)return;const lk=S.liked.has(id);
+  openSheet(`<div class="head">${artHTML(s)}<div class="meta" style="min-width:0"><b style="display:block">${esc(s.title)}</b><span style="color:var(--muted);font-size:13px">${esc(s.artist)}</span></div></div>
+   <button class="opt" data-sa="like">${lk?I.heartF:I.heart}${lk?"Remove from Liked":"Like"}</button>
+   <button class="opt" data-sa="next">${I.next}Play next</button>
+   <button class="opt" data-sa="radio">${I.radio}Start song radio</button>
+   <button class="opt" data-sa="addpl">${I.list}Add to playlist</button>
+   <button class="opt" data-sa="mood">${I.radio.replace(/<circle.*?\/>/,'<circle cx="12" cy="12" r="3"/>')}Add to mood${songMoods(s).length?` · <span style="color:var(--muted);font-size:13px">${songMoods(s).map(x=>MOODS.find(m=>m.id===x).name).join(", ")}</span>`:""}</button>
+   ${cur()&&cur().id===id?`<button class="opt" data-sa="sleep">${I.dots.replace(/<circle.*/,'<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z" fill="none" stroke="currentColor" stroke-width="2"/></svg>')}Sleep timer</button>`:""}
+   <button class="opt" data-sa="lang">${I.ext.replace(/<path.*?\/>/,'<path d="M4 5h16M4 12h10M4 19h7"/>')}Set language: ${s.lang?s.lang[0].toUpperCase()+s.lang.slice(1):"not set"}</button>
+   ${s.cat?`<button class="opt" data-sa="ext">${I.ext}Open in YouTube, Spotify or JioSaavn</button>`:""}
+   ${s.demo||s.cat?"":`<button class="opt" data-sa="del" style="color:#ff6b6b">${I.trash}Remove from library</button>`}`);
+  $("#sheetBody").onclick=e=>{const b=e.target.closest("[data-sa]");if(!b)return;const a=b.dataset.sa;
+    if(a==="like"){like(id);closeSheet()}
+    if(a==="mood"){moodSheet(id);return}
+    if(a==="ext"){chartSheet(s);return}
+    if(a==="sleep"){sleepSheet();return}
+    if(a==="next"){if(S.qi<0)playSong(id);else{S.queue.splice(S.qi+1,0,id);S.base.push(id);renderUpNext();toast("Will play next")}closeSheet()}
+    if(a==="radio"){const sim=similarTo(s,15);playList([id,...sim.map(x=>x.id)],0);toast("Song radio: "+s.title);closeSheet()}
+    if(a==="lang"){s.lang={"":"hindi",hindi:"english",english:""}[s.lang||""];saveState();songSheet(id);renderHomeLib()}
+    if(a==="addpl"){openSheet(`<div style="font-weight:700;padding:4px 6px 10px">Add to playlist</div>${S.playlists.map(p=>`<button class="opt" data-pa="${p.id}">${I.list}${esc(p.name)}</button>`).join("")}<button class="opt" data-pa="new">＋ New playlist</button>`);
+      $("#sheetBody").onclick=ev=>{const t=ev.target.closest("[data-pa]");if(!t)return;
+        if(t.dataset.pa==="new"){newPlaylist(id);return}
+        const p=S.playlists.find(x=>x.id===t.dataset.pa);if(!p.songIds.includes(id))p.songIds.push(id);saveState();renderLib();closeSheet();toast("Added to "+p.name)}}
+    if(a==="del"){S.songs=S.songs.filter(x=>x.id!==id);S.playlists.forEach(p=>p.songIds=p.songIds.filter(x=>x!==id));S.liked.delete(id);delFile(id);
+      if(cur()&&cur().id===id){audio.pause()}S.queue=S.queue.filter(x=>x!==id);saveState();renderAll();closeSheet();toast("Removed")}
+  };
+}
+function newPlaylist(addId){
+  openSheet(`<div style="font-weight:700;padding:4px 6px">New playlist</div><form id="plForm" style="padding:0 6px"><input type="text" id="plName" placeholder="e.g. Arijit evenings, Gym hits" maxlength="40"><button class="btn" type="submit">Create</button></form>`);
+  setTimeout(()=>{try{$("#plName").focus()}catch(e){}},250);
+  $("#plForm").onsubmit=e=>{e.preventDefault();const n=$("#plName").value.trim();if(!n)return;
+    const p={id:uid(),name:n,songIds:addId?[addId]:[]};S.playlists.push(p);saveState();S.lib="playlists";setChip("#libChips","l","playlists");renderLib();closeSheet();toast("Playlist created")};
+}
+function openGroup(title,songs,sub){
+  openSheet(`<div style="padding:4px 6px 10px"><div style="font-weight:800;font-size:18px">${esc(title)}</div><div style="color:var(--muted);font-size:13px">${esc(sub)}</div>
+    <div class="btns" style="margin-top:12px"><button class="btn" data-g="play">${I.play.replace(/28/g,"16")}Play</button><button class="btn ghost" data-g="shuf">Shuffle</button></div></div>
+    <div>${songs.map(s=>songRow(s,{ctx:"group"})).join("")||'<div class="empty">No songs yet. Use ⋮ on any song to add it.</div>'}</div>`);
+  $("#sheetBody").onclick=e=>{const g=e.target.closest("[data-g]");const ids=songs.map(s=>s.id);
+    if(g&&ids.length){if(g.dataset.g==="shuf"&&!S.shuffle)setShuffle(true);playList(ids,g.dataset.g==="shuf"?Math.floor(Math.random()*ids.length):0);closeSheet();return}
+    const it=e.target.closest(".item[data-id]");if(e.target.closest("[data-more]")){songSheet(e.target.closest("[data-more]").dataset.more);return}
+    if(it){playSong(it.dataset.id,ids);closeSheet()}};
+}
+
+/* ===================== global click routing ===================== */
+document.addEventListener("click",e=>{
+  if(e.target.closest("#sheet"))return;
+  const more=e.target.closest("[data-more]");if(more){e.stopPropagation();songSheet(more.dataset.more);return}
+  const md=e.target.closest("[data-mood]");if(md){openMood(md.dataset.mood);return}
+  const ch=e.target.closest("[data-chart]");if(ch){const[t,a]=ch.dataset.chart.split("|");chartSheet(ALL_CHART.find(c=>c.title===t&&c.artist===a)||{title:t,artist:a});return}
+  const pl=e.target.closest("[data-play]");if(pl){const grp=pl.dataset.group==="mfy"?madeForYou().map(s=>s.id):null;
+    const ctx=grp||[...pl.parentElement.querySelectorAll("[data-play]")].map(x=>x.dataset.play);playSong(pl.dataset.play,ctx);return}
+  const it=e.target.closest(".item[data-id]");if(it){const id=it.dataset.id,ctx=it.dataset.ctx;
+    if(ctx==="queue"){const i=S.queue.indexOf(id,S.qi+1);if(i>=0){S.qi=i;load()}return}
+    if(ctx==="sim"){S.queue.splice(S.qi+1,0,id);S.qi++;load();return}
+    const ids=[...it.parentElement.querySelectorAll(".item[data-id]")].map(x=>x.dataset.id);playSong(id,ids);return}
+  const plb=e.target.closest("[data-pl]");if(plb){const p=S.playlists.find(x=>x.id===plb.dataset.pl);openGroup(p.name,p.songIds.map(byId).filter(Boolean),"Playlist");return}
+  const ar=e.target.closest("[data-artist]");if(ar){const a=ar.dataset.artist;openGroup(a,S.songs.filter(s=>s.artist===a),"Artist");return}
+  const qb=e.target.closest("[data-q]");if(qb){$("#q").value=qb.dataset.q;renderSearch();return}
+  const act=e.target.closest("[data-act]");if(act){const a=act.dataset.act;
+    if(a==="add")$("#fileIn").click();
+    if(a==="demo")playList(S.songs.filter(s=>s.demo).map(s=>s.id),0);
+    if(a==="top")playList(CHART_HINDI.map(c=>catOf(c).id),0);
+    if(a==="playliked"){const ids=S.songs.filter(s=>S.liked.has(s.id)).map(s=>s.id);playList(ids,0)}}
+});
+function setChip(sel,key,val){document.querySelectorAll(sel+" .chip").forEach(c=>c.classList.toggle("on",c.dataset[key]===val))}
+$("#homeChips").onclick=e=>{const c=e.target.closest(".chip");if(!c)return;S.filter=c.dataset.f;setChip("#homeChips","f",S.filter);renderHomeLib()};
+$("#libChips").onclick=e=>{const c=e.target.closest(".chip");if(!c)return;S.lib=c.dataset.l;setChip("#libChips","l",S.lib);renderLib()};
+$("#newPlBtn").onclick=()=>newPlaylist(null);
+$("#q").addEventListener("input",renderSearch);
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id==="v-"+b.dataset.v));$("#main").scrollTop=0;
+  if(b.dataset.v==="lib")renderLib();});
+$("#mini").onclick=e=>{if(e.target.closest("#miniPlay")){toggle();return}if(e.target.closest("#miniLike")){const s=cur();s&&like(s.id);return}
+  renderUpNext();$("#player").classList.add("on")};
+$("#pClose").onclick=()=>$("#player").classList.remove("on");
+$("#sleepBtn").onclick=sleepSheet;
+$("#pMore").onclick=()=>{const s=cur();s&&songSheet(s.id)};
+$("#pLike").onclick=()=>{const s=cur();s&&like(s.id)};
+$("#play").onclick=toggle;$("#next").onclick=()=>next(true);$("#prev").onclick=prev;
+$("#shuf").onclick=()=>{setShuffle(!S.shuffle);toast(S.shuffle?"Shuffle on":"Shuffle off")};
+$("#rep").onclick=cycleRepeat;
+$("#autoSw").onclick=()=>{S.auto=!S.auto;saveState();updateNow();toast(S.auto?"Autoplay similar songs: on":"Autoplay: off")};
+document.addEventListener("keydown",e=>{if(e.target.tagName==="INPUT")return;if(e.code==="Space"){e.preventDefault();toggle()}});
+
+/* ===================== boot ===================== */
+(async()=>{
+  const h=new Date().getHours();$("#greet").textContent=h<12?"Good morning":h<17?"Good afternoon":"Good evening";
+  DEMOS.forEach((d,i)=>S.songs.push({id:"demo"+i,demo:true,album:"Dhun Demos",...d}));
+  S.songs.push(...CATALOG);loadNew();
+  renderCharts();renderAll();
+  db=await idbOpen();
+  const st=await idb("kv","readonly",s=>s.get("state"));
+  if(st){S.songs.push(...(st.songs||[]));S.playlists=st.playlists||[];S.liked=new Set(st.liked||[]);S.plays=st.plays||{};S.history=st.history||[];
+    S.auto=st.auto!==false;S.repeat=st.repeat||"off";S.shuffle=!!st.shuffle;
+    for(const s of S.songs.filter(x=>!x.demo)){const rec=await getFile(s.id);if(rec&&rec.art)s.artUrl=URL.createObjectURL(rec.art)}
+    renderAll()}
+})();
+</script>
+</body>
+</html>
