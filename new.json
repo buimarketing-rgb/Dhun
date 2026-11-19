@@ -1,6 +1,159 @@
 {
- "updated": "2026-11-18T07:47:59.405Z",
+ "updated": "2026-11-19T07:43:04.881Z",
  "songs": [
+  {
+   "id": "Qnr0060lUZE",
+   "title": "Aisi Meri Vibe",
+   "artist": "Vibe",
+   "lang": "hindi",
+   "channel": "Tips Official",
+   "published": "2026-11-19T06:00:34+00:00",
+   "views": 2586
+  },
+  {
+   "id": "IAfZ3xbJ610",
+   "title": "Gunmaaster G9 Title Track",
+   "artist": "Emraan Hashmi, Genelia, Aparshakti, Deepak, Aditya, Bappi Da · 27 Nov ",
+   "lang": "hindi",
+   "channel": "Saregama Music",
+   "published": "2026-11-19T05:41:06+00:00",
+   "views": 29937
+  },
+  {
+   "id": "mNJHF4axR7Q",
+   "title": "Lak Tere Te",
+   "artist": "Rajveer Singh · Musii",
+   "lang": "hindi",
+   "channel": "Zee Music Company",
+   "published": "2026-11-19T05:30:03+00:00",
+   "views": 2897
+  },
+  {
+   "id": "tv-5UsZQQD4",
+   "title": "Buzz",
+   "artist": "8K/4K · Aastha Gill",
+   "lang": "hindi",
+   "channel": "Sony Music India",
+   "published": "2026-11-19T05:30:02+00:00",
+   "views": 3571
+  },
+  {
+   "id": "w497HRCK9OU",
+   "title": "Tenu Leke Jaana : Tiger Shroff",
+   "artist": "The Rish · Ketika Sharma",
+   "lang": "hindi",
+   "channel": "T-Series",
+   "published": "2026-11-19T05:30:01+00:00",
+   "views": 70342
+  },
+  {
+   "id": "HQVBZfvsksE",
+   "title": "Hanju",
+   "artist": "Gippy Grewal · Speed Records",
+   "lang": "hindi",
+   "channel": "Speed Records",
+   "published": "2026-11-19T04:30:32+00:00",
+   "views": 3325
+  },
+  {
+   "id": "cn-kcgnLW-o",
+   "title": "Top 5 Hits of Badshah",
+   "artist": "Paani Paani · Morni",
+   "lang": "hindi",
+   "channel": "Saregama Music",
+   "published": "2026-11-19T03:30:17+00:00",
+   "views": 6687
+  },
+  {
+   "id": "Kg4q19tGd6E",
+   "title": "Palki Mein Hoke Sawar Chali Re",
+   "artist": "90's Hits · Hindi Sadabahar Gaane",
+   "lang": "hindi",
+   "channel": "Tips Official",
+   "published": "2026-11-19T02:30:05+00:00",
+   "views": 8144
+  },
+  {
+   "id": "CnmeZ00H_Ng",
+   "title": "Jaane Kis Mod Pe",
+   "artist": "Pehla Pyaar Doosri Baar · Darshan Raval",
+   "lang": "hindi",
+   "channel": "T-Series",
+   "published": "2026-11-18T13:30:32+00:00",
+   "views": 145215
+  },
+  {
+   "id": "hj-yUXMcKmk",
+   "title": "Sankat Mochan",
+   "artist": "Dalimb · Jitendra Kumar & Priya Bapat",
+   "lang": "hindi",
+   "channel": "Zee Music Company",
+   "published": "2026-11-18T12:30:03+00:00",
+   "views": 599560
+  },
+  {
+   "id": "JaUzcRflw-k",
+   "title": "Chappa Chappa",
+   "artist": "Hariharan, Suresh Wadkar",
+   "lang": "hindi",
+   "channel": "Sony Music India",
+   "published": "2026-11-18T11:30:27+00:00",
+   "views": 35551
+  },
+  {
+   "id": "o88RNlShDw8",
+   "title": "NAZM : Aniket Shukla",
+   "artist": "Shreya Basu",
+   "lang": "hindi",
+   "channel": "T-Series",
+   "published": "2026-11-18T11:30:06+00:00",
+   "views": 58714
+  },
+  {
+   "id": "Z_tBQfOtvh8",
+   "title": "90s Evergreen Songs",
+   "artist": "90s Hit Hindi Songs · 90s Purane Gane",
+   "lang": "hindi",
+   "channel": "Tips Official",
+   "published": "2026-11-18T11:00:17+00:00",
+   "views": 45198
+  },
+  {
+   "id": "BM6ee6T3AS4",
+   "title": "Dil Naiyo Lagna : Himansh Kohli",
+   "artist": "Aryabhatt Ka Zero · Stebin Ben",
+   "lang": "hindi",
+   "channel": "T-Series",
+   "published": "2026-11-18T10:43:17+00:00",
+   "views": 78479
+  },
+  {
+   "id": "S3128SS7lhk",
+   "title": "Dil Farzi : Himansh Kohli",
+   "artist": "Aryabhatt Ka Zero · Manan Bhardwaj, Sachet-Parampara",
+   "lang": "hindi",
+   "channel": "T-Series",
+   "published": "2026-11-18T10:36:28+00:00",
+   "views": 78346
+  },
+  {
+   "id": "gMlu0t5N2WE",
+   "title": "Pehla Ishq",
+   "artist": "Ruslaan",
+   "lang": "hindi",
+   "channel": "Saregama Music",
+   "published": "2026-11-18T10:19:36+00:00",
+   "views": 34650
+  },
+  {
+   "id": "vLNiaU5CLho",
+   "title": "Dupatta Tera Nau Rang Da 8K",
+   "artist": "Partner · Salman Khan, Govinda, Katrina Kaif, Lara Dutta",
+   "lang": "hindi",
+   "channel": "T-Series",
+   "published": "2026-11-18T08:42:49+00:00",
+   "views": 391992
+  },
   {
    "id": "Q9q7ntxdrrI",
    "title": "Chott Chott",
@@ -8,7 +161,7 @@
    "lang": "hindi",
    "channel": "Tips Official",
    "published": "2026-11-18T07:31:34+00:00",
-   "views": 162
+   "views": 28560
   },
   {
    "id": "Qlzu9d2sklc",
@@ -17,7 +170,7 @@
    "lang": "hindi",
    "channel": "Zee Music Company",
    "published": "2026-11-18T06:00:01+00:00",
-   "views": 4531
+   "views": 1441701
   },
   {
    "id": "Oak3mrX2AUM",
@@ -26,7 +179,7 @@
    "lang": "hindi",
    "channel": "T-Series",
    "published": "2026-11-18T05:41:05+00:00",
-   "views": 37109
+   "views": 6875045
   },
   {
    "id": "C9j1aEP1kxc",
@@ -35,7 +188,7 @@
    "lang": "hindi",
    "channel": "Sony Music India",
    "published": "2026-11-18T04:30:39+00:00",
-   "views": 14749
+   "views": 59109
   },
   {
    "id": "irG3rJRVg0Q",
@@ -44,7 +197,7 @@
    "lang": "hindi",
    "channel": "Speed Records",
    "published": "2026-11-18T04:30:34+00:00",
-   "views": 4754
+   "views": 31499
   },
   {
    "id": "pEAbF_MMXjE",
@@ -53,7 +206,7 @@
    "lang": "hindi",
    "channel": "Tips Official",
    "published": "2026-11-18T02:30:17+00:00",
-   "views": 16683
+   "views": 36795
   },
   {
    "id": "R2qkBeglFO0",
@@ -62,7 +215,7 @@
    "lang": "hindi",
    "channel": "Zee Music Company",
    "published": "2026-11-18T02:30:14+00:00",
-   "views": 21356
+   "views": 69166
   },
   {
    "id": "Jon4Hy2sgeY",
@@ -71,7 +224,7 @@
    "lang": "hindi",
    "channel": "T-Series",
    "published": "2026-11-17T14:44:06+00:00",
-   "views": 54395
+   "views": 69475
   },
   {
    "id": "uqAXLpBSZ4o",
@@ -80,7 +233,7 @@
    "lang": "hindi",
    "channel": "T-Series",
    "published": "2026-11-17T13:35:50+00:00",
-   "views": 19787
+   "views": 23186
   },
   {
    "id": "GL8eMw_7t-Y",
@@ -89,7 +242,7 @@
    "lang": "hindi",
    "channel": "Sony Music India",
    "published": "2026-11-17T12:50:07+00:00",
-   "views": 497709
+   "views": 939941
   },
   {
    "id": "0ewQJIg95Ec",
@@ -98,7 +251,7 @@
    "lang": "hindi",
    "channel": "T-Series",
    "published": "2026-11-17T11:33:54+00:00",
-   "views": 276450
+   "views": 347397
   },
   {
    "id": "FhJXFbvUdMo",
@@ -107,7 +260,7 @@
    "lang": "hindi",
    "channel": "Sony Music India",
    "published": "2026-11-17T11:32:03+00:00",
-   "views": 133532
+   "views": 184386
   },
   {
    "id": "EGl5IIKBt8U",
@@ -116,7 +269,7 @@
    "lang": "hindi",
    "channel": "Saregama Music",
    "published": "2026-11-17T10:46:30+00:00",
-   "views": 905912
+   "views": 1018674
   },
   {
    "id": "Kk-D3i1rtVo",
@@ -125,7 +278,7 @@
    "lang": "hindi",
    "channel": "Tips Official",
    "published": "2026-11-17T10:30:08+00:00",
-   "views": 54976
+   "views": 65376
   },
   {
    "id": "TTyCOSPtnYw",
@@ -134,7 +287,7 @@
    "lang": "hindi",
    "channel": "T-Series",
    "published": "2026-11-17T09:30:08+00:00",
-   "views": 39395
+   "views": 47360
   },
   {
    "id": "oqK1NQR8zro",
@@ -143,7 +296,7 @@
    "lang": "hindi",
    "channel": "T-Series",
    "published": "2026-11-17T08:10:23+00:00",
-   "views": 29296
+   "views": 31440
   },
   {
    "id": "TcDqZgr3RzA",
@@ -152,34 +305,7 @@
    "lang": "hindi",
    "channel": "Saregama Music",
    "published": "2026-11-17T07:07:53+00:00",
-   "views": 48999
-  },
-  {
-   "id": "lmNYgqD7bz4",
-   "title": "Jun Tora",
-   "artist": "Zubeen Garg",
-   "lang": "hindi",
-   "channel": "Zee Music Company",
-   "published": "2026-11-17T06:00:14+00:00",
-   "views": 27442
-  },
-  {
-   "id": "v44eSpTIPmo",
-   "title": "Meri Zindagi Mein Ajnabee (Lofi Mix)",
-   "artist": "Ajnabee · Kareena Kapoor,Bobby Deo,Kumar Sanu,Sunidhi Chauhan",
-   "lang": "hindi",
-   "channel": "Tips Official",
-   "published": "2026-11-17T05:30:32+00:00",
-   "views": 60639
-  },
-  {
-   "id": "bZSOfStwBnM",
-   "title": "Ramayana: O Ragho",
-   "artist": "Namit M, Nitesh T · Ranbir Kapoor, Yash",
-   "lang": "hindi",
-   "channel": "T-Series",
-   "published": "2026-11-17T05:30:01+00:00",
-   "views": 1050204
+   "views": 58774
   },
   {
    "id": "bLk8hGw3-DM",
@@ -188,7 +314,7 @@
    "lang": "hindi",
    "channel": "Speed Records",
    "published": "2026-11-17T04:30:39+00:00",
-   "views": 25687
+   "views": 28147
   },
   {
    "id": "1o3-3FBS2wU",
@@ -197,25 +323,7 @@
    "lang": "hindi",
    "channel": "Saregama Music",
    "published": "2026-11-17T04:30:38+00:00",
-   "views": 20824
-  },
-  {
-   "id": "AEARI-L8g74",
-   "title": "Zoobi Doobi",
-   "artist": "3 Idiots · Aamir Khan & Kareena Kapoor",
-   "lang": "hindi",
-   "channel": "Zee Music Company",
-   "published": "2026-11-17T02:30:25+00:00",
-   "views": 44660
-  },
-  {
-   "id": "bSrROHZe3Pc",
-   "title": "सदाबहार गाने",
-   "artist": "90's Evergreen Songs · Hindi Songs",
-   "lang": "hindi",
-   "channel": "Tips Official",
-   "published": "2026-11-17T02:30:05+00:00",
-   "views": 27637
+   "views": 25533
   },
   {
    "id": "ZJWECea3t7s",
@@ -224,61 +332,7 @@
    "lang": "hindi",
    "channel": "Sony Music India",
    "published": "2026-11-17T01:30:28+00:00",
-   "views": 38788
-  },
-  {
-   "id": "l9J6UEzAsGQ",
-   "title": "Kamaal",
-   "artist": "Pehla Pyaar Doosri Baar · Rochak Kohli",
-   "lang": "hindi",
-   "channel": "T-Series",
-   "published": "2026-11-16T13:00:04+00:00",
-   "views": 153860
-  },
-  {
-   "id": "xX27vpdTLOg",
-   "title": "Enna Sona",
-   "artist": "Arijit Singh",
-   "lang": "hindi",
-   "channel": "Sony Music India",
-   "published": "2026-11-16T11:30:16+00:00",
-   "views": 156871
-  },
-  {
-   "id": "hUtLXEdrI7s",
-   "title": "Mysaa: Aao Ri Chirraiya",
-   "artist": "Rashmika Mandanna · Rawindra Pulle",
-   "lang": "hindi",
-   "channel": "T-Series",
-   "published": "2026-11-16T10:30:16+00:00",
-   "views": 2170593
-  },
-  {
-   "id": "0sIaXw9Idj8",
-   "title": "90's Evergreen Songs",
-   "artist": "पुराने हिंदी गाने · Bollywood Old Is Gold",
-   "lang": "hindi",
-   "channel": "Tips Official",
-   "published": "2026-11-16T10:30:09+00:00",
-   "views": 236586
-  },
-  {
-   "id": "8HTRuENQK2Y",
-   "title": "Chaand",
-   "artist": "Pehla Pyaar Doosri Baar · Faheem Abdullah",
-   "lang": "hindi",
-   "channel": "T-Series",
-   "published": "2026-11-16T09:29:51+00:00",
-   "views": 57870
-  },
-  {
-   "id": "MF7WIg78WBo",
-   "title": "Zulmi",
-   "artist": "Pehla Pyaar Doosri Baar · Tanishk Baagchi",
-   "lang": "hindi",
-   "channel": "T-Series",
-   "published": "2026-11-16T08:00:05+00:00",
-   "views": 310464
+   "views": 40819
   },
   {
    "id": "OYsTQOoHTiY",
@@ -287,25 +341,7 @@
    "lang": "hindi",
    "channel": "Saregama Music",
    "published": "2026-11-16T06:37:38+00:00",
-   "views": 120406
-  },
-  {
-   "id": "Fl3Muq2tKDc",
-   "title": "Zara Tasveer Se Tu Nikalke Saamne Aa Meri Mehbooba 8K",
-   "artist": "Pardes, Shah Rukh Khan · Kumar Sanu,Alka Yagnik",
-   "lang": "hindi",
-   "channel": "Tips Official",
-   "published": "2026-11-16T05:30:23+00:00",
-   "views": 93201
-  },
-  {
-   "id": "2yFtPtt-li0",
-   "title": "Dekhha Tenu",
-   "artist": "Piano Version · Rajkummar Rao, Janhvi Kapoor",
-   "lang": "hindi",
-   "channel": "Sony Music India",
-   "published": "2026-11-16T04:30:27+00:00",
-   "views": 45275
+   "views": 141093
   },
   {
    "id": "vWOuHCLgquE",
@@ -314,25 +350,7 @@
    "lang": "hindi",
    "channel": "Speed Records",
    "published": "2026-11-16T04:30:21+00:00",
-   "views": 299662
-  },
-  {
-   "id": "kI59u0ITNPM",
-   "title": "90s Evergreen Songs Collection",
-   "artist": "90s Hits Hindi Songs · 90s Sadabahar Gane",
-   "lang": "hindi",
-   "channel": "Tips Official",
-   "published": "2026-11-16T02:30:38+00:00",
-   "views": 343871
-  },
-  {
-   "id": "4IJgdqU6dIM",
-   "title": "Paani Da Rang",
-   "artist": "8K/4K · Ayushmann Khurrana",
-   "lang": "hindi",
-   "channel": "Sony Music India",
-   "published": "2026-11-15T04:30:27+00:00",
-   "views": 373041
+   "views": 343741
   },
   {
    "id": "Ous_X7P0JX8",
@@ -341,25 +359,7 @@
    "lang": "hindi",
    "channel": "Speed Records",
    "published": "2026-11-15T04:30:01+00:00",
-   "views": 259253
-  },
-  {
-   "id": "ghsvuw7fEOw",
-   "title": "Rooth Na Jana",
-   "artist": "1942 A Love Story",
-   "lang": "hindi",
-   "channel": "Saregama Music",
-   "published": "2026-11-14T07:30:22+00:00",
-   "views": 46097
-  },
-  {
-   "id": "oMqyYOahdsc",
-   "title": "Paradox",
-   "artist": "Bade Dino Baad · Audio",
-   "lang": "hindi",
-   "channel": "Saregama Music",
-   "published": "2026-11-14T04:30:05+00:00",
-   "views": 168211
+   "views": 264077
   },
   {
    "id": "hX9S94XsySk",
@@ -368,7 +368,7 @@
    "lang": "english",
    "channel": "The Weeknd",
    "published": "2026-11-12T16:00:33+00:00",
-   "views": 13130405
+   "views": 15669544
   },
   {
    "id": "uXymCnWk9LI",
@@ -377,7 +377,7 @@
    "lang": "english",
    "channel": "Olivia Rodrigo",
    "published": "2026-11-06T01:00:08+00:00",
-   "views": 7712111
+   "views": 7861707
   },
   {
    "id": "nE_znSndRuQ",
@@ -386,7 +386,7 @@
    "lang": "english",
    "channel": "Olivia Rodrigo",
    "published": "2026-11-06T01:00:03+00:00",
-   "views": 716925
+   "views": 729019
   },
   {
    "id": "yi24DPRG0Sg",
@@ -395,7 +395,7 @@
    "lang": "english",
    "channel": "Tate McRae",
    "published": "2026-10-23T17:15:18+00:00",
-   "views": 1632078
+   "views": 1656696
   },
   {
    "id": "4N5ZVgU_WlE",
@@ -404,7 +404,7 @@
    "lang": "english",
    "channel": "Olivia Rodrigo",
    "published": "2026-10-21T21:09:42+00:00",
-   "views": 2250848
+   "views": 2273233
   },
   {
    "id": "GpVM-FITRv4",
@@ -413,7 +413,7 @@
    "lang": "english",
    "channel": "Tate McRae",
    "published": "2026-10-19T18:57:10+00:00",
-   "views": 2667689
+   "views": 2706826
   },
   {
    "id": "xeDCmDge4ME",
@@ -422,7 +422,7 @@
    "lang": "english",
    "channel": "Tate McRae",
    "published": "2026-10-19T18:57:01+00:00",
-   "views": 2799792
+   "views": 2834048
   },
   {
    "id": "uo4JWL45ESY",
@@ -431,7 +431,7 @@
    "lang": "english",
    "channel": "Tate McRae",
    "published": "2026-10-19T18:56:48+00:00",
-   "views": 11308499
+   "views": 11441059
   },
   {
    "id": "gsZauX8gwxo",
@@ -440,7 +440,7 @@
    "lang": "english",
    "channel": "Olivia Rodrigo",
    "published": "2026-10-16T00:00:10+00:00",
-   "views": 27986898
+   "views": 28159483
   },
   {
    "id": "DPEodkHzH-s",
@@ -449,7 +449,7 @@
    "lang": "english",
    "channel": "Tate McRae",
    "published": "2026-10-16T00:00:06+00:00",
-   "views": 31625018
+   "views": 32206812
   },
   {
    "id": "SmzLX_weRMc",
@@ -458,7 +458,7 @@
    "lang": "english",
    "channel": "Olivia Rodrigo",
    "published": "2026-10-16T00:00:01+00:00",
-   "views": 3020524
+   "views": 3055443
   },
   {
    "id": "9B_Fbnx6Ewg",
@@ -467,16 +467,7 @@
    "lang": "english",
    "channel": "The Weeknd",
    "published": "2026-10-14T01:00:39+00:00",
-   "views": 2823960
-  },
-  {
-   "id": "j8pR1tyoRFc",
-   "title": "Patient Zero (Expanded Video)",
-   "artist": "Taylor Swift",
-   "lang": "english",
-   "channel": "Taylor Swift",
-   "published": "2026-10-05T04:00:36+00:00",
-   "views": 5515466
+   "views": 2854524
   }
  ]
 }
